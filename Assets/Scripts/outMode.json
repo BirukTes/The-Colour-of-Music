@@ -1,0 +1,42 @@
+{
+"file_metadata": {
+  "jams_version": "0.2.0",
+  "identifiers": { "filename": "audio.ogg" },
+  "duration": 204.817392290
+},
+"annotations": [
+{
+  "namespace": "unknown",
+  "annotation_metadata": {
+    "annotation_tools": "Sonic Annotator v1.6",
+    "data_source": "Automatic feature extraction",
+    "annotator": {
+      "plugin_id": "vamp:qm-vamp-plugins:qm-keydetector",
+      "output_id": "mode",
+      "plugin_version": "6",
+      "step_size": 32768,
+      "block_size": 32768,
+      "sample_rate": 44100,
+      "parameters": {
+        "length": 10,
+        "tuning": 440
+      },
+      "transform_id": "vamp:qm-vamp-plugins:qm-keydetector:mode"
+    }
+  },
+  "data": [
+    { "time": 0.000000000, "duration": 0.0, "confidence": 1.0, "label": "Minor", "value": 1 },
+    { "time": 3.715192744, "duration": 0.0, "confidence": 1.0, "label": "Major", "value": 0 },
+    { "time": 5.944308390, "duration": 0.0, "confidence": 1.0, "label": "Minor", "value": 1 },
+    { "time": 40.867120181, "duration": 0.0, "confidence": 1.0, "label": "Major", "value": 0 },
+    { "time": 43.839274376, "duration": 0.0, "confidence": 1.0, "label": "Minor", "value": 1 },
+    { "time": 75.789931973, "duration": 0.0, "confidence": 1.0, "label": "Major", "value": 0 },
+    { "time": 95.108934240, "duration": 0.0, "confidence": 1.0, "label": "Minor", "value": 1 },
+    { "time": 110.712743764, "duration": 0.0, "confidence": 1.0, "label": "Major", "value": 0 },
+    { "time": 120.372244898, "duration": 0.0, "confidence": 1.0, "label": "Minor", "value": 1 },
+    { "time": 151.579863946, "duration": 0.0, "confidence": 1.0, "label": "Major", "value": 0 },
+    { "time": 159.010249433, "duration": 0.0, "confidence": 1.0, "label": "Minor", "value": 1 }
+  ]
+}
+]
+}

@@ -1,89 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using AnotherFileBrowser.Windows;
 using System.IO;
 
 public class ButtonController : MonoBehaviour
 {
-    [Header("Sprites")]
-    public Sprite playSolid;
-    public Sprite pauseSolid;
-    public Sprite compressSolid;
-    public Sprite expandSolid;
-
-
-    private AudioSource audioSource;
-    private Image playPauseBtnImage;
-    private bool playPauseBtnImage_SetPlay;
-    private bool playPauseBtnImage_SetPause;
-    private Image fullscreeBtnImage;
-    private bool fullscreeBtnImage_SetCompress;
-    private bool fullscreeBtnImage_SetExpand;
-
-
-    public GameObject AppController; 
     public Toggle ToggleVideo;
-    public Toggle TogglePicture; 
-
-
-    [Header("Recorder Variables")]
-    public Camera mainCamera;
-    public RenderTexture renderTexture;
-
-    [Header("To Enable/Disable (on Recorder)")]
-    public GameObject secondaryCameraGO;
-    public GameObject controlPanelGO;
-    public GameObject secondaryCanvasGO;
-
-    private bool enableDisabled_DuringRecord = false;
-    private bool enableDisabled_AfterRecord = false;
-    private bool windowMaximised = false;
-
-    // private RecorderController recorderController;
-    private int defWidth;
-    private int defHeight;
-    public void Awake()
-    {
-        defWidth = Screen.width;
-        defHeight = Screen.height;
-    }
-
-    void Start()
-    {
-        // Fetch the AudioSource from the GameObject this script is attached to
-        audioSource = GetComponent<AudioSource>();
-
-        playPauseBtnImage = GameObject.Find("ButtonPlayPause").GetComponent<Image>();
-        fullscreeBtnImage = GameObject.Find("ImageFullScreen").GetComponent<Image>();
-    }
-
-    void Update()
-    {
-        // if (recorderController != null)
-        // {
-        //     enableDisableObjects();
-        // }
-
-        if (Screen.fullScreen)
-        {
-            windowMaximised = false;
-        }
-        else
-        {
-            if (!windowMaximised)
-            {
-                MaximizeStandaloneWindow.MaximizeWindow();
-
-                windowMaximised = true;
-            }
-
-        }
-
-        updateSprites();
-    }
-
+    public Toggle TogglePicture;
 
     public void ScreenControl()
     {
@@ -99,51 +22,17 @@ public class ButtonController : MonoBehaviour
 
     public void PlayPause()
     {
-        if (audioSource.isPlaying)
+        if (Main.audioSource.isPlaying)
         {
-            audioSource.Pause();
+            Main.audioSource.Pause();
         }
         else
         {
-            audioSource.Play();
+            Main.audioSource.Play();
         }
     }
-    // public void StartVideoRecording()
-    // {
-    //     if (renderTexture == null)
-    //     {
-    //         Debug.LogError($"You must assign a valid renderTexture before entering Play Mode");
-    //         return;
-    //     }
 
-    //     RecorderOptions.VerboseMode = true;
-
-    //     var controllerSettings = ScriptableObject.CreateInstance<RecorderControllerSettings>();
-    //     recorderController = new RecorderController(controllerSettings);
-
-    //     var videoRecorder = ScriptableObject.CreateInstance<MovieRecorderSettings>();
-    //     videoRecorder.name = "My Video Recorder";
-    //     videoRecorder.Enabled = true;
-    //     // videoRecorder.OutputFile = "Recordings/PicTarot_" + currentCardId;
-    //     videoRecorder.OutputFormat = MovieRecorderSettings.VideoRecorderOutputFormat.MP4;
-
-    //     videoRecorder.ImageInputSettings = new RenderTextureInputSettings()
-    //     {
-    //         OutputWidth = renderTexture.width,
-    //         OutputHeight = renderTexture.height,
-    //         RenderTexture = renderTexture
-    //     };
-
-    //     videoRecorder.AudioInputSettings.PreserveAudio = true;
-
-    //     controllerSettings.AddRecorderSettings(videoRecorder);
-    //     controllerSettings.SetRecordModeToFrameInterval(0, 10 * 30); // 2s @ 30 FPS
-    //     controllerSettings.FrameRate = 30;
-    //     recorderController.PrepareRecording();
-    //     recorderController.StartRecording();
-    // }
-
-    public void selectAudioFile()
+    public void SelectAudioFile()
     {
         var bp = new BrowserProperties();
         bp.title = "Select Audio File";
@@ -163,91 +52,55 @@ public class ButtonController : MonoBehaviour
         });
     }
 
-    public void ChangeToMovie()
+    public void ToggleMovieOrPicture()
     {
         if (ToggleVideo.isOn)
         {
-            AppController.GetComponent<AudioSyncColor>().enabled = false;
-            AppController.GetComponent<AudioSyncColor>().enabled = false;
-            
+            GetComponent<AudioProcessor>().enabled = true;
+            GetComponent<AudioSyncColor>().enabled = true;
+            GetComponent<AddImagesGrid>().enabled = false;
+        }
+        else if (TogglePicture.isOn)
+        {
+            GetComponent<AudioProcessor>().enabled = false;
+            GetComponent<AudioSyncColor>().enabled = false;
+            GetComponent<AddImagesGrid>().enabled = true;
         }
     }
 
-    public void ChangeToPicture()
+
+    public void SaveVisualisation()
     {
-
-    }
-
-    private void updateSprites()
-    {
-        if (audioSource.isPlaying)
+        if (ToggleVideo.isOn)
         {
-            if (!playPauseBtnImage_SetPause)
-            {
-                playPauseBtnImage.sprite = pauseSolid;
-                playPauseBtnImage_SetPause = true;
-                playPauseBtnImage_SetPlay = false;
-            }
+            // TODO
         }
-        else
+        else if (TogglePicture.isOn)
         {
-            if (!playPauseBtnImage_SetPlay)
-            {
-                playPauseBtnImage.sprite = playSolid;
-                playPauseBtnImage_SetPause = false;
-                playPauseBtnImage_SetPlay = true;
-            }
-        }
 
-        if (Screen.fullScreen)
-        {
-            if (!fullscreeBtnImage_SetCompress)
+            var bp = new BrowserProperties();
+            bp.title = "Select Audio File";
+            bp.filter = "Supported Image File (*.png)|*.png";
+            bp.filterIndex = 2;
+
+            new FileBrowser().SaveFileBrowser(bp, "The Colour of Music", "png", result =>
             {
-                fullscreeBtnImage.sprite = compressSolid;
-                fullscreeBtnImage_SetCompress = true;
-                fullscreeBtnImage_SetExpand = false;
-            }
-        }
-        else
-        {
-            if (!fullscreeBtnImage_SetExpand)
-            {
-                fullscreeBtnImage.sprite = expandSolid;
-                fullscreeBtnImage_SetExpand = true;
-                fullscreeBtnImage_SetCompress = false;
-            }
+                // create new thread to save the image to file (only operation that can be done in background)
+                new System.Threading.Thread(() =>
+                {
+                    Texture2D currentPictureTex = (Texture2D)GameObject.Find("SpiralPuzzlePanel").GetComponentInChildren<RawImage>().texture;
+
+                    // pull in our file data bytes for the specified image format (has to be done from main thread)
+                    byte[] fileData = currentPictureTex.EncodeToPNG();    // create file and write optional header with image bytes
+                    var f = System.IO.File.Create(result);
+
+                    f.Write(fileData, 0, fileData.Length);
+                    f.Close();
+                    Debug.Log(string.Format("Wrote screenshot {0} of size {1}", result, fileData.Length));
+                }).Start();
+
+                Debug.Log(result);
+            });
         }
     }
-
-    // private void enableDisableObjects()
-    // {
-    //     if (recorderController.IsRecording())
-    //     {
-    //         if (!enableDisabled_DuringRecord)
-    //         {
-    //             controlPanelGO.SetActive(false);
-    //             mainCamera.targetTexture = renderTexture;
-
-    //             secondaryCanvasGO.SetActive(true);
-    //             secondaryCameraGO.SetActive(true);
-
-    //             enableDisabled_DuringRecord = true;
-    //             enableDisabled_AfterRecord = false;
-    //         }
-    //     }
-    //     else
-    //     {
-    //         if (!enableDisabled_AfterRecord)
-    //         {
-    //             controlPanelGO.SetActive(true);
-    //             mainCamera.targetTexture = null;
-
-    //             secondaryCanvasGO.SetActive(false);
-    //             secondaryCameraGO.SetActive(false);
-
-    //             enableDisabled_AfterRecord = true;
-    //             enableDisabled_DuringRecord = false;
-    //         }
-    //     }
-    // }
 }

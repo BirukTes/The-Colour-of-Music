@@ -7,7 +7,6 @@ using System.Collections.Generic;
 //     http://answers.unity.com/answers/1296574/view.html, https://answers.unity.com/questions/22954/how-to-save-a-picture-take-screenshot-from-a-camer.html
 
 // Screen Recorder will save individual images of active scene in any resolution
-
 public class ScreenRecorder : MonoBehaviour
 {
     // 4k = 3840 x 2160   1080p = 1920 x 1080
@@ -16,87 +15,109 @@ public class ScreenRecorder : MonoBehaviour
 
     // optional game object to hide during screenshots (usually your scene canvas hud)
     public GameObject hideGameObject;
+    private int defaultGoActiveValue = -1; // -1 = not set, 0=false, 1=true
 
-    // optimize for many screenshots will not destroy any objects so future screenshots will be fast
-    public bool optimizeForManyScreenshots = true;
 
     // private vars for screenshot
     private Rect rect;
     private RenderTexture renderTexture;
     private Texture2D screenShot;
     public static List<Texture2D> screenShotList = new List<Texture2D>();
-    private int counter = 0; // image #
 
     // commands
-    private bool captureScreenshot = false;
-    private bool captureVideo = false;
+    private bool finishedScreenshot = false;
+    private bool finishedVideoCapture = false;
+    public static bool finishedRecording = false;
 
 
-    public int fps = 10;
-    private float videoTime = 0;
+    private int fps = 10;
+    private float screenShotTime = 0;
 
-    public void CaptureScreenshot()
-    {
-        captureScreenshot = true;
-    }
 
     void Update()
     {
-        // check keyboard 'k' for one time screenshot capture and holding down 'v' for continious screenshots
-        captureScreenshot |= Input.GetKeyDown("k");
-        captureVideo = Input.GetKey("v");
-
-        if (captureScreenshot || captureVideo)
+        if (Main.audioFinishedPlaying)
         {
-            captureScreenshot = false;
-
-            videoTime += Time.deltaTime;
-
-            if (videoTime >= (1f / (float)fps))
+            finishedRecording = true;
+        }
+        else
+        {
+            if (Main.audioSource.isPlaying && !finishedRecording)
             {
-                Debug.LogFormat(videoTime.ToString());
-                videoTime = 0;
+                TakeScreenShot();
+            }
+        }
+    }
 
-                // hide optional game object if set
-                if (hideGameObject != null) hideGameObject.SetActive(false);
 
-                // create screenshot objects if needed
-                if (renderTexture == null)
+    public void TakeScreenShot()
+    {
+        screenShotTime += Time.deltaTime;
+
+        if (screenShotTime >= (1f / (float)fps))
+        {
+            Debug.LogFormat(screenShotTime.ToString());
+            screenShotTime = 0;
+
+            HideUnhideGO(true);
+
+            // create screenshot objects if needed
+            if (renderTexture == null)
+            {
+                // creates off-screen render texture that can rendered into
+                rect = new Rect(0, 0, captureWidth, captureHeight);
+                renderTexture = new RenderTexture(captureWidth, captureHeight, 24);
+                screenShot = new Texture2D(captureWidth, captureHeight, TextureFormat.RGB24, false);
+            }
+
+            // get main camera and manually render scene into rt
+            Camera camera = this.GetComponent<Camera>(); // NOTE: added because there was no reference to camera in original script; must add this script to Camera
+            camera.targetTexture = renderTexture;
+            camera.Render();
+
+            // read pixels will read from the currently active render texture so make our offscreen 
+            // render texture active and then read the pixels
+            RenderTexture.active = renderTexture;
+            screenShot.ReadPixels(rect, 0, 0);
+
+            // reset active camera texture and render texture
+            camera.targetTexture = null;
+            RenderTexture.active = null;
+            screenShotList.Add(screenShot);
+
+            HideUnhideGO(false);
+
+            Debug.Log("list : " + screenShotList.Count);
+        }
+    }
+
+
+    public void TakeVideo()
+    {
+
+    }
+
+    private void HideUnhideGO(bool value)
+    {
+        // hide optional game object if set
+        if (hideGameObject != null)
+        {
+            if (defaultGoActiveValue == -1)
+                defaultGoActiveValue = hideGameObject.activeSelf ? 1 : 0;
+
+            if (value)
+            {
+                if (defaultGoActiveValue == 1)
                 {
-                    // creates off-screen render texture that can rendered into
-                    rect = new Rect(0, 0, captureWidth, captureHeight);
-                    renderTexture = new RenderTexture(captureWidth, captureHeight, 24);
-                    screenShot = new Texture2D(captureWidth, captureHeight, TextureFormat.RGB24, false);
+                    hideGameObject.SetActive(false);
                 }
-
-                // get main camera and manually render scene into rt
-                Camera camera = this.GetComponent<Camera>(); // NOTE: added because there was no reference to camera in original script; must add this script to Camera
-                camera.targetTexture = renderTexture;
-                camera.Render();
-
-                // read pixels will read from the currently active render texture so make our offscreen 
-                // render texture active and then read the pixels
-                RenderTexture.active = renderTexture;
-                screenShot.ReadPixels(rect, 0, 0);
-
-                // reset active camera texture and render texture
-                camera.targetTexture = null;
-                RenderTexture.active = null;
-                screenShotList.Add(screenShot);
-
-
-                // unhide optional game object if set
-                if (hideGameObject != null) hideGameObject.SetActive(true);
-
-                // cleanup if needed
-                if (optimizeForManyScreenshots == false)
+            }
+            else
+            {
+                if (defaultGoActiveValue == 1)
                 {
-                    Destroy(renderTexture);
-                    renderTexture = null;
-                    screenShot = null;
+                    hideGameObject.SetActive(true);
                 }
-                Debug.Log("list : " + screenShotList.Count);
-
             }
         }
     }

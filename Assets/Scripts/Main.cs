@@ -5,52 +5,69 @@ using System.IO;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.UI;
 
 public class Main : MonoBehaviour
 {
+    //Static
+    public static AudioSource audioSource;
+
     public static string selectedAudioPath;
     public static string selectedAudioPathName;
-
     public static bool audioFileChanged = false;
     public static bool audioClipChanged = false;
+    public static bool audioFinishedPlaying = false;
 
 
-    //Make sure your GameObject has an AudioSource component first
-    private static AudioSource audioSource;
-    private string clipLength;
+    [Header("Sprites")]
+    public Sprite playSolid;
+    public Sprite pauseSolid;
+    public Sprite compressSolid;
+    public Sprite expandSolid;
 
+    [Space]
+    public Image playPauseBtnImage;
+    private bool playPauseBtnImage_SetPlay;
+    private bool playPauseBtnImage_SetPause;
+    public Image fullscreenBtnImage;
+    private bool fullscreeBtnImage_SetCompress;
+    private bool fullscreeBtnImage_SetExpand;
+
+
+    [Space]
     public TextMeshProUGUI textFileName;
     public TextMeshProUGUI textRunningTime;
-    public RectTransform rectT; // Assign the UI element which you wanna capture
+
+    [Space]
+    public GameObject controlsGO;
+    public Button saveButton;
+    public Button pictureToggle;
+
     private int width; // width of the object to capture
     private int height; // height of the object to capture
+    private string clipLength;
+    private bool windowMaximised = false;
+    private bool disabledBtnsOn = false;
+    private Coroutine co_HideCursor;
 
     void Awake()
     {
         selectedAudioPath = Application.dataPath + "/Lib/sonic-annotator-1.6-win64/audio.ogg";
         selectedAudioPathName = Path.GetFileName(selectedAudioPath);
+
+        // Fetch the AudioSource from the GameObject this script is attached to
+        audioSource = GetComponent<AudioSource>();
     }
 
     // Start is called before the first frame update
     void Start()
     {
-        // Fetch the AudioSource from the GameObject this script is attached to
-        audioSource = GetComponent<AudioSource>();
-
         updateMediaInfo();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            Debug.Log("herea");
-            // ScreenCapture.CaptureScreenshot("FullPageScreenShot.png");
-            // StartCoroutine(takeScreenShot()); // screenshot of a particular UI Element.
-            this.GetComponent<AddImagesGrid>().enabled = true;
-        }
-
         if (audioFileChanged)
         {
             StartCoroutine(changeClip());
@@ -60,23 +77,53 @@ public class Main : MonoBehaviour
             updateMediaInfo();
             audioClipChanged = false;
         }
+        if (audioSource.time == audioSource.clip.length)
+        {
+            audioFinishedPlaying = true;
+        }
+        else
+        {
+            audioFinishedPlaying = false;
+        }
 
+        UpdateFullscreen();
+        UpdateSprites();
         updateRunningTime();
+        HideWhileInActive();
+
+        UpdateScreenRecordFinish();
     }
 
     ////////////////////////  PUBLIC ///////////////////
 
 
-    ////////////////////////  PRIVATE ///////////////////
+    #region ////////////////////////  PRIVATE ///////////////////
+    private void UpdateFullscreen()
+    {
+        if (Screen.fullScreen)
+        {
+            windowMaximised = false;
+        }
+        else
+        {
+            if (!windowMaximised)
+            {
+                MaximizeStandaloneWindow.MaximizeWindow();
+
+                windowMaximised = true;
+            }
+
+        }
+    }
+
     private void updateRunningTime()
     {
-        if (audioSource.isPlaying)
+        if (audioSource.isPlaying && controlsGO.activeSelf)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(audioSource.time);
 
             textRunningTime.text = string.Format("{0:D2}:{1:D2}", timeSpan.Minutes, timeSpan.Seconds) + " / " + clipLength;
         }
-
     }
 
     private IEnumerator changeClip()
@@ -106,6 +153,8 @@ public class Main : MonoBehaviour
                 }
             }
         }
+
+        yield break;
     }
 
     private void updateMediaInfo()
@@ -122,4 +171,111 @@ public class Main : MonoBehaviour
             tooltip.infoLeft = selectedAudioPathName;
         }
     }
+
+
+    private void UpdateSprites()
+    {
+        if (audioSource.isPlaying)
+        {
+            if (!playPauseBtnImage_SetPause)
+            {
+                playPauseBtnImage.sprite = pauseSolid;
+                playPauseBtnImage_SetPause = true;
+                playPauseBtnImage_SetPlay = false;
+            }
+        }
+        else
+        {
+            if (!playPauseBtnImage_SetPlay)
+            {
+                playPauseBtnImage.sprite = playSolid;
+                playPauseBtnImage_SetPause = false;
+                playPauseBtnImage_SetPlay = true;
+            }
+        }
+
+        if (Screen.fullScreen)
+        {
+            if (!fullscreeBtnImage_SetCompress)
+            {
+                fullscreenBtnImage.sprite = compressSolid;
+                fullscreeBtnImage_SetCompress = true;
+                fullscreeBtnImage_SetExpand = false;
+            }
+        }
+        else
+        {
+            if (!fullscreeBtnImage_SetExpand)
+            {
+                fullscreenBtnImage.sprite = expandSolid;
+                fullscreeBtnImage_SetExpand = true;
+                fullscreeBtnImage_SetCompress = false;
+            }
+        }
+    }
+
+    private void HideWhileInActive()
+    {
+        if (audioSource.isPlaying)
+        {
+            if (Input.GetAxis("Mouse X") == 0 && (Input.GetAxis("Mouse Y") == 0))
+            {
+                if (co_HideCursor == null)
+                {
+                    co_HideCursor = StartCoroutine(HideCursor());
+                }
+            }
+            else
+            {
+                if (co_HideCursor != null)
+                {
+                    StopCoroutine(co_HideCursor);
+                    co_HideCursor = null;
+                    Cursor.visible = true;
+                    controlsGO.SetActive(true);
+                }
+            }
+        }
+        else
+        {
+            if (!Cursor.visible)
+                Cursor.visible = true;
+
+            if (!controlsGO.activeSelf)
+                controlsGO.SetActive(true);
+        }
+    }
+    private IEnumerator HideCursor()
+    {
+        yield return new WaitForSeconds(3);
+        Cursor.visible = false;
+        controlsGO.SetActive(false);
+    }
+
+
+    private void UpdateScreenRecordFinish()
+    {
+        if (ScreenRecorder.finishedRecording)
+        {
+            if (!disabledBtnsOn)
+            {
+                saveButton.interactable = true;
+                pictureToggle.interactable = true;
+
+                disabledBtnsOn = true;
+            }
+        }
+        else
+        {
+            if (disabledBtnsOn)
+            {
+                saveButton.interactable = false;
+                pictureToggle.interactable = false;
+
+                disabledBtnsOn = false;
+            }
+        }
+    }
+
+    #endregion 
 }

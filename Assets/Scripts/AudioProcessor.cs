@@ -7,74 +7,83 @@ public class AudioProcessor : MonoBehaviour
 {
     private static SonicRunner sonic = new SonicRunner();
     public static string currentEmotionValue { get; private set; }
+    public static float currentTempoValue { get; private set; }
 
-    private static IList<TransformerDataResult> tempoDataResults, modeDataResults;
-
-    //Make sure your GameObject has an AudioSource component first
-    AudioSource audioSource;
+    private static IList<TransformerDataResult> tempoDataResults = new List<TransformerDataResult>(), modeDataResults = new List<TransformerDataResult>();
+    private static bool finishedSettingDatasets = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        // Fetch the AudioSource from the GameObject this script is attached to
-        audioSource = GetComponent<AudioSource>();
-
-        setAudioData();
+        SetAudioData(false);
     }
+    // void OnEnable()
+    // {
+    //     SetAudioData(false);
+    // }
 
     // Update is called once per frame
     void Update()
     {
-        if (audioSource.isPlaying)
+        if (Main.audioSource.isPlaying)
         {
-            float currentTimePosition = audioSource.time;
+            float currentTimePosition = Main.audioSource.time;
             // Debug.Log(currentTimePosition);
-            getEmotion(currentTimePosition);
+            GetEmotion(currentTimePosition);
         }
 
     }
 
-    public static void setAudioData()
+    public static void SetAudioData(bool usePbar)
     {
-        // audioSource.clip.
-        (int exitCode, string jsonStrTempiOutput) = sonic.sonicGetTempi(Main.selectedAudioPath);
-
-        if (exitCode == 0)
+        if (!finishedSettingDatasets)
         {
-            // Call the deserializer  
-            tempoDataResults = JsonHelper.DeserializeToList<TransformerDataResult>(jsonStrTempiOutput);
-        }
+            if (usePbar)
+            {
+                ProgressBar.EnableProgressBarGO();
+                ProgressBar.IncrementProgressBar(0.1f);
+            }
 
-        (int exitCode1, string jsonStrModeOutput) = sonic.sonicGetModes(Main.selectedAudioPath);
+            // audioSource.clip.
+            (int exitCode, string jsonStrTempiOutput) = sonic.sonicGetTempi(Main.selectedAudioPath);
 
-        if (exitCode1 == 0)
-        {
-            modeDataResults = JsonHelper.DeserializeToList<TransformerDataResult>(jsonStrModeOutput);
+            if (exitCode == 0)
+            {
+                // Call the deserializer  
+                tempoDataResults = JsonHelper.DeserializeToList<TransformerDataResult>(jsonStrTempiOutput);
+            }
+
+            if (usePbar)
+            {
+                ProgressBar.IncrementProgressBar(0.5f);
+            }
+
+            (int exitCode1, string jsonStrModeOutput) = sonic.sonicGetModes(Main.selectedAudioPath);
+
+            if (exitCode1 == 0)
+            {
+                modeDataResults = JsonHelper.DeserializeToList<TransformerDataResult>(jsonStrModeOutput);
+            }
+
+            if (usePbar)
+            {
+                ProgressBar.IncrementProgressBar(1f);
+                ProgressBar.DisableProgressBarGO();
+            }
+
+            finishedSettingDatasets = true;
         }
     }
 
-    private void getEmotion(float currentTimePosition)
+    private void GetEmotion(float currentTimePosition)
     {
         // currentEmotionValue = "None";
         float tempo = 0f;
         int mode = 0; // 0: minor, 1:major        
 
-        foreach (var tempoData in tempoDataResults)
-        {
-            if (tempoData.Time >= currentTimePosition && tempoData.Time <= currentTimePosition)
-            {
-                tempo = tempoData.Value;
-                break;
-            }
-        }
-        foreach (var modeData in modeDataResults)
-        {
-            if (modeData.Time >= currentTimePosition && modeData.Time <= currentTimePosition)
-            {
-                mode = (int)modeData.Value;
-                break;
-            }
-        }
+        currentTempoValue = getValueFor(tempoDataResults, currentTimePosition);
+        mode = (int)getValueFor(modeDataResults, currentTimePosition);
+
 
         if ((tempo > 108) && (mode == 1))
         {
@@ -84,6 +93,35 @@ public class AudioProcessor : MonoBehaviour
         {
             currentEmotionValue = "sad";
         }
+    }
+
+    private static float getValueFor(IList<TransformerDataResult> transformerDataResults, float currentTimePosition)
+    {
+        int count = transformerDataResults.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if ((i + 1) > count) // This is the end of the music/timeline
+            {
+                return transformerDataResults[i].Value;
+            }
+            else
+            {
+                if (currentTimePosition >= transformerDataResults[i].Time && currentTimePosition <= transformerDataResults[i + 1].Time)
+                {
+                    return transformerDataResults[i].Value;
+                }
+            }
+        }
+        return 0;
+    }
+
+
+    //// RESET VALUES    
+    public static void ResetValues()
+    {
+        finishedSettingDatasets = false;
+        tempoDataResults = new List<TransformerDataResult>();
+        modeDataResults = new List<TransformerDataResult>();
     }
 
 }

@@ -13,7 +13,9 @@ public class Main : MonoBehaviour
     public static AudioSource audioSource;
 
     public static string selectedAudioPath;
+    public static string defaultAudioPath;
     public static string selectedAudioPathName;
+    public static string defaultAudioPathName;
     public static bool audioFileChanged = false;
     public static bool audioClipChanged = false;
     public static bool audioFinishedPlaying = false;
@@ -41,7 +43,7 @@ public class Main : MonoBehaviour
     [Space]
     public GameObject controlsGO;
     public Button saveButton;
-    public Button pictureToggle;
+    public Toggle pictureToggle;
 
     private int width; // width of the object to capture
     private int height; // height of the object to capture
@@ -52,8 +54,10 @@ public class Main : MonoBehaviour
 
     void Awake()
     {
-        selectedAudioPath = Application.dataPath + "/Lib/sonic-annotator-1.6-win64/audio.ogg";
-        selectedAudioPathName = Path.GetFileName(selectedAudioPath);
+        defaultAudioPath = Application.dataPath + "/Lib/sonic-annotator-1.6-win64/audio.ogg";
+        defaultAudioPathName = Path.GetFileName(defaultAudioPath);
+        selectedAudioPath = defaultAudioPath;
+        selectedAudioPathName = defaultAudioPathName;
 
         // Fetch the AudioSource from the GameObject this script is attached to
         audioSource = GetComponent<AudioSource>();
@@ -75,10 +79,17 @@ public class Main : MonoBehaviour
         else if (audioClipChanged)
         {
             updateMediaInfo();
+
+            ScreenRecorder.ResetValues();
+            AddImagesToGrid.ResetValues();
+
             audioClipChanged = false;
         }
-        if (audioSource.time == audioSource.clip.length)
+
+
+        if (audioSource.time >= 30)
         {
+            audioSource.Stop();
             audioFinishedPlaying = true;
         }
         else
@@ -88,7 +99,7 @@ public class Main : MonoBehaviour
 
         UpdateFullscreen();
         UpdateSprites();
-        updateRunningTime();
+        UpdateRunningTime();
         HideWhileInActive();
 
         UpdateScreenRecordFinish();
@@ -116,9 +127,9 @@ public class Main : MonoBehaviour
         }
     }
 
-    private void updateRunningTime()
+    private void UpdateRunningTime()
     {
-        if (audioSource.isPlaying && controlsGO.activeSelf)
+        if ((audioSource.isPlaying && controlsGO.activeSelf) || audioFinishedPlaying)
         {
             TimeSpan timeSpan = TimeSpan.FromSeconds(audioSource.time);
 
@@ -128,7 +139,18 @@ public class Main : MonoBehaviour
 
     private IEnumerator changeClip()
     {
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + selectedAudioPath, AudioType.MPEG))
+        AudioType audioType = AudioType.MPEG;
+        var extension = Path.GetExtension(selectedAudioPath);
+        if (extension == ".wav")
+        {
+            audioType = AudioType.WAV;
+        }
+        else if (extension == ".ogg")
+        {
+            audioType = AudioType.OGGVORBIS;
+        }
+
+        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + selectedAudioPath, audioType))
         {
             yield return www.SendWebRequest();
 
@@ -159,7 +181,7 @@ public class Main : MonoBehaviour
 
     private void updateMediaInfo()
     {
-        TimeSpan clipLengthTimeSpan = TimeSpan.FromSeconds(audioSource.clip.length);
+        TimeSpan clipLengthTimeSpan = TimeSpan.FromSeconds(30);
         clipLength = string.Format("{0:D2}:{1:D2}", clipLengthTimeSpan.Minutes, clipLengthTimeSpan.Seconds);
 
         // Set fileName    
@@ -232,7 +254,9 @@ public class Main : MonoBehaviour
                     StopCoroutine(co_HideCursor);
                     co_HideCursor = null;
                     Cursor.visible = true;
-                    controlsGO.SetActive(true);
+
+                    if (ScreenRecorder.finishedRecording)
+                        controlsGO.SetActive(true);
                 }
             }
         }
@@ -241,8 +265,9 @@ public class Main : MonoBehaviour
             if (!Cursor.visible)
                 Cursor.visible = true;
 
-            if (!controlsGO.activeSelf)
-                controlsGO.SetActive(true);
+            if (ScreenRecorder.finishedRecording)
+                if (!controlsGO.activeSelf)
+                    controlsGO.SetActive(true);
         }
     }
     private IEnumerator HideCursor()
@@ -259,6 +284,7 @@ public class Main : MonoBehaviour
         {
             if (!disabledBtnsOn)
             {
+                // TODO: neends to be off while processing...
                 saveButton.interactable = true;
                 pictureToggle.interactable = true;
 

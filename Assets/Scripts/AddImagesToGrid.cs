@@ -4,43 +4,62 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class AddImagesGrid : MonoBehaviour
+public class AddImagesToGrid : MonoBehaviour
 {
     public GameObject puzzleField;
     public GameObject ControlsGO;
-    public RawImage img;
+    public RawImage rawImage;
 
-    private bool set1 = false;
-    private bool set = false;
-    private bool calculated = false;
-    private bool finishedMainRoutine = false;
-    private bool replaceChildrenWithSingle = false;
+    // Bools
+    private static bool finishedSettingPlaceholders = false;
+    private static bool finishedSettingTextures = false;
+    private static bool calculated = false;
+    private static bool finishedMainRoutine = false;
+    private static bool replacedChildrenWithSingle = false;
 
 
     private List<int> spiralPath;
     private Texture2D screenShotTexture;
+    private int screenShotsCount = 0;
+    private float overallAmountToProcess = 0;
+    private float overallProcessedAmount = 0;
 
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         puzzleField.SetActive(true);
-        foreach (Transform child in puzzleField.transform)
+        if (!replacedChildrenWithSingle)
         {
-            Destroy(child.gameObject);
+            ProgressBar.EnableProgressBarGO();
+            foreach (Transform child in puzzleField.transform)
+            {
+                Destroy(child.gameObject);
+            }
+            if (!finishedSettingPlaceholders)
+            {
+                //Change the path to location where your images are stored.
+                if (ScreenRecorder.screenShotList != null)
+                {
+                    screenShotsCount = ScreenRecorder.screenShotList.Count;
+                    overallAmountToProcess = ((float)screenShotsCount) * 2; // For both placeholder and adding images process
+                    StartCoroutine("addPlaceholders");
+                }
+            }
         }
-        if (!set1)
-        {
-            StartCoroutine("addPlaceholders");
-        }
+    }
+
+    void OnDisable()
+    {
+        puzzleField.SetActive(false);
     }
 
     void Update()
     {
         if (puzzleField.activeSelf)
         {
-            if (set1)
+            if (finishedSettingPlaceholders)
             {
-                if (!set)
+                if (!finishedSettingTextures)
                 {
                     StartCoroutine("addRawImages");
                 }
@@ -52,7 +71,7 @@ public class AddImagesGrid : MonoBehaviour
                         StopCoroutine("addRawImages");
                         StartCoroutine("takeScreenShot");
                     }
-                    else if (!replaceChildrenWithSingle)
+                    else if (!replacedChildrenWithSingle)
                     {
                         StopCoroutine("takeScreenShot");
 
@@ -67,28 +86,23 @@ public class AddImagesGrid : MonoBehaviour
         }
     }
 
+
+    //////////////////////// Coroutines ///////////////////
     private IEnumerator addPlaceholders()
     {
-        //Change the path to location where your images are stored.
-
-        if (ScreenRecorder.screenShotList != null)
+        for (int i = 0; i < screenShotsCount; i++)
         {
+            RawImage currentRawImageComp = Instantiate(rawImage);
+            currentRawImageComp.transform.SetParent(puzzleField.transform, false);
 
-            for (int i = 0; i < ScreenRecorder.screenShotList.Count; i++)
-            {
-                RawImage image1 = Instantiate(img);
-                image1.name = "img" + i;
-                image1.transform.SetParent(puzzleField.transform, false);
-                yield return null;
-            }
+            overallProcessedAmount = (float)i;
+            ProgressBar.IncrementProgressBar(overallProcessedAmount / overallAmountToProcess);
+            yield return null;
         }
-
-        set1 = true;
+        finishedSettingPlaceholders = true;
         yield break;
     }
 
-
-    //////////////////////// Coroutines ///////////////////
     private IEnumerator addRawImages()
     {
         if (!calculated)
@@ -113,9 +127,15 @@ public class AddImagesGrid : MonoBehaviour
                     // This will make the code efficient reducing the need to calculate redundant rows
                     row -= 1;
                 }
-                else
+                else if (diffBetweenChild > row)
                 {
                     // Otherwise, reduce from spiralPath variable, by passing the amount needed to reduce
+                    // Row and Amount reduction are needed
+                    amountByToReduce = diffBetweenChild - row;
+                    row -= 1;
+                }
+                else
+                {
                     amountByToReduce = diffBetweenChild;
                 }
             }
@@ -126,18 +146,16 @@ public class AddImagesGrid : MonoBehaviour
 
         for (int i = 0; i < spiralPath.Count; i++)
         {
-            Debug.Log(puzzleField.transform.childCount);
-            Debug.Log("here: " + i + " And her: " + (spiralPath[i] - 1));
-
             // path begins from 1, but children from 0
-            RawImage image1 = puzzleField.transform.GetChild(spiralPath[i] - 1).GetComponent<RawImage>();
+            RawImage currentRawImageComp = puzzleField.transform.GetChild(spiralPath[i] - 1).GetComponent<RawImage>();
             ScreenRecorder.screenShotList[i].Compress(false);
-            image1.texture = ScreenRecorder.screenShotList[i];
+            currentRawImageComp.texture = ScreenRecorder.screenShotList[i];
 
+            ProgressBar.IncrementProgressBar((overallProcessedAmount + (float)i) / overallAmountToProcess);
             yield return null;
         }
 
-        set = true;
+        finishedSettingTextures = true;
         yield break;
     }
 
@@ -145,6 +163,7 @@ public class AddImagesGrid : MonoBehaviour
     {
 
         ControlsGO.SetActive(false);
+        ProgressBar.DisableProgressBarGO();
 
         yield return new WaitForEndOfFrame();
 
@@ -168,16 +187,16 @@ public class AddImagesGrid : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         // path begins from 1, but children from 0
-        RawImage image1 = puzzleField.transform.GetChild(0).GetComponent<RawImage>();
+        RawImage currentRawImageComp = puzzleField.transform.GetChild(0).GetComponent<RawImage>();
         // ScreenRecorder.screenShotList[i].Compress(false);
-        image1.texture = screenShotTexture;
-        replaceChildrenWithSingle = true;
+        currentRawImageComp.texture = screenShotTexture;
+        replacedChildrenWithSingle = true;
 
         yield break;
     }
 
 
-    //////////////////////// Funcs //////////////////////
+    //////////////////////// Functions //////////////////////
     private void calculateNum(int row, int column, int amountByToReduce)
     {
         int[,] spiralMatrix;
@@ -197,5 +216,16 @@ public class AddImagesGrid : MonoBehaviour
                 spiralPath.Remove(num);
             }
         }
+    }
+
+
+    //// RESET VALUES    
+    public static void ResetValues()
+    {
+        finishedSettingPlaceholders = false;
+        finishedSettingTextures = false;
+        calculated = false;
+        finishedMainRoutine = false;
+        replacedChildrenWithSingle = false;
     }
 }

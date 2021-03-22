@@ -14,6 +14,8 @@ public class ScreenRecorder : MonoBehaviour
     private static bool finishedScreenshot = false;
     private static bool finishedVideoCapture = false;
     public static bool finishedRecording = false;
+    public static bool isVideoCapturing = false;
+    public static bool isVideoCaptureInProcess = false;
 
     void Update()
     {
@@ -23,8 +25,8 @@ public class ScreenRecorder : MonoBehaviour
         }
         else
         {
-            TakeScreenShot();
-            // TakeVideo();            
+            // TakeScreenShot();
+            TakeVideo();
         }
     }
 
@@ -51,38 +53,42 @@ public class ScreenRecorder : MonoBehaviour
         if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.NOT_START && Main.audioSource.isPlaying) // if ("Not Started Capture") => Start
         {
             VideoCaptureCtrl.instance.StartCapture();
+            Debug.Log("Started");
         }
-        else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STARTED && !Main.audioSource.isPlaying) // "Pause Capture"
+        else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STARTED && !Main.audioSource.isPlaying && !Main.audioFinishedPlaying) // "Pause Capture"
         {
             VideoCaptureCtrl.instance.ToggleCapture();
+            Debug.Log("Pause");
         }
         else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.PAUSED && Main.audioSource.isPlaying) // "Continue Capture"
         {
             VideoCaptureCtrl.instance.ToggleCapture();
+            Debug.Log("Continue");
         }
         else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STARTED && Main.audioFinishedPlaying) // "Stop Capture"
         {
+            Debug.Log("Stop");
             VideoCaptureCtrl.instance.StopCapture();
         }
-        else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STOPPED)
+        else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STOPPED && !isVideoCaptureInProcess)
         {
             // "Processing" => nothing to do
+            isVideoCaptureInProcess = true;
         }
-        else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.FINISH)
+        else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.FINISH && !finishedVideoCapture)
         {
             // if ("Finished")
             finishedVideoCapture = true;
+            isVideoCaptureInProcess = false;
         }
     }
 
     private IEnumerator TakeScreenShotInCoroutine()
     {
-        hideGameObject.SetActive(false);
         yield return new WaitForEndOfFrame();
 
         screenShotList.Add(ScreenCapture.CaptureScreenshotAsTexture());
 
-        hideGameObject.SetActive(true);
         yield break;
     }
 

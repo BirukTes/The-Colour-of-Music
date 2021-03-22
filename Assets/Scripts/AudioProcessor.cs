@@ -45,7 +45,7 @@ public class AudioProcessor : MonoBehaviour
             }
 
             // audioSource.clip.
-            (int exitCode, string jsonStrTempiOutput) = sonic.sonicGetTempi(Main.selectedAudioPath);
+            (int exitCode, string jsonStrTempiOutput) = sonic.sonicGetTempi(Main.audioPathInUseForProcessing);
 
             if (exitCode == 0)
             {
@@ -58,7 +58,7 @@ public class AudioProcessor : MonoBehaviour
                 ProgressBar.IncrementProgressBar(0.5f);
             }
 
-            (int exitCode1, string jsonStrModeOutput) = sonic.sonicGetModes(Main.selectedAudioPath);
+            (int exitCode1, string jsonStrModeOutput) = sonic.sonicGetModes(Main.audioPathInUseForProcessing);
 
             if (exitCode1 == 0)
             {
@@ -100,8 +100,9 @@ public class AudioProcessor : MonoBehaviour
         int count = transformerDataResults.Count;
         for (int i = 0; i < count; i++)
         {
-            if ((i + 1) > count) // This is the end of the music/timeline
+            if (((i + 1) > count) || (count == 1)) 
             {
+                // This is the end of the music/timeline, either there is one count or i + 1 will be out of range.
                 return transformerDataResults[i].Value;
             }
             else

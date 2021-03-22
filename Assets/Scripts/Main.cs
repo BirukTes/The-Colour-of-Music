@@ -13,6 +13,7 @@ public class Main : MonoBehaviour
     public static AudioSource audioSource;
 
     public static string selectedAudioPath;
+    public static string audioPathInUseForProcessing;
     public static string defaultAudioPath;
     public static string selectedAudioPathName;
     public static string defaultAudioPathName;
@@ -54,10 +55,11 @@ public class Main : MonoBehaviour
 
     void Awake()
     {
-        defaultAudioPath = Application.dataPath + "/Lib/sonic-annotator-1.6-win64/audio.ogg";
+        defaultAudioPath = Application.dataPath + "/Audio/Lang Lang – Beethoven Für Elise Bagatelle No. 25 in A Minor, WoO 59.ogg";
         defaultAudioPathName = Path.GetFileName(defaultAudioPath);
         selectedAudioPath = defaultAudioPath;
         selectedAudioPathName = defaultAudioPathName;
+        audioPathInUseForProcessing = defaultAudioPath;
 
         // Fetch the AudioSource from the GameObject this script is attached to
         audioSource = GetComponent<AudioSource>();
@@ -66,28 +68,45 @@ public class Main : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        updateMediaInfo();
+        UpdateMediaInfo();
     }
 
     // Update is called once per frame
     void Update()
     {
+        //When the user hits the spacebar, pause/play, but not while adding images and only works while playing
+        if (Input.GetKeyDown(KeyCode.Space) && !AddImagesToGrid.isProcessing)
+        {
+            if (audioSource.isPlaying)
+            {
+                audioSource.Pause();
+            }
+            else
+            {
+                audioSource.Play();
+            }
+        }
+
         if (audioFileChanged)
         {
-            StartCoroutine(changeClip());
+            StartCoroutine(ChangeClip());
         }
         else if (audioClipChanged)
         {
-            updateMediaInfo();
+            UpdateMediaInfo();
 
+            AudioProcessor.ResetValues();
+            AudioProcessor.SetAudioData(false);
             ScreenRecorder.ResetValues();
             AddImagesToGrid.ResetValues();
 
+            ProgressBar.IncrementProgressBar(1f);
+            audioSource.Play();
             audioClipChanged = false;
+            ProgressBar.DisableProgressBarGO();
         }
 
-
-        if (audioSource.time >= 30)
+        if (audioSource.isPlaying && audioSource.time >= 30)
         {
             audioSource.Stop();
             audioFinishedPlaying = true;
@@ -100,7 +119,7 @@ public class Main : MonoBehaviour
         UpdateFullscreen();
         UpdateSprites();
         UpdateRunningTime();
-        HideWhileInActive();
+        HideWhilePlaying();
 
         UpdateScreenRecordFinish();
     }
@@ -137,7 +156,7 @@ public class Main : MonoBehaviour
         }
     }
 
-    private IEnumerator changeClip()
+    private IEnumerator ChangeClip()
     {
         AudioType audioType = AudioType.MPEG;
         var extension = Path.GetExtension(selectedAudioPath);
@@ -161,6 +180,8 @@ public class Main : MonoBehaviour
             else
             {
                 AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
+                ProgressBar.IncrementProgressBar(0.3f);
+
                 if (myClip == null)
                 {
                     Debug.Log("Clip null");
@@ -169,9 +190,17 @@ public class Main : MonoBehaviour
                 {
                     audioSource.Stop();
                     audioSource.clip = myClip;
-                    audioSource.Play();
+                    ProgressBar.IncrementProgressBar(0.5f);
+
                     audioFileChanged = false;
                     audioClipChanged = true;
+
+                    if (audioType == AudioType.MPEG)
+                    {
+                        audioPathInUseForProcessing = StringUtil.Replace(selectedAudioPath, ".mp3", ".wav", StringComparison.OrdinalIgnoreCase);
+                        SavWav.Save(audioPathInUseForProcessing, myClip, false);
+                    }
+                    ProgressBar.IncrementProgressBar(0.7f);
                 }
             }
         }
@@ -179,7 +208,7 @@ public class Main : MonoBehaviour
         yield break;
     }
 
-    private void updateMediaInfo()
+    private void UpdateMediaInfo()
     {
         TimeSpan clipLengthTimeSpan = TimeSpan.FromSeconds(30);
         clipLength = string.Format("{0:D2}:{1:D2}", clipLengthTimeSpan.Minutes, clipLengthTimeSpan.Seconds);
@@ -236,7 +265,7 @@ public class Main : MonoBehaviour
         }
     }
 
-    private void HideWhileInActive()
+    private void HideWhilePlaying()
     {
         if (audioSource.isPlaying)
         {
@@ -254,27 +283,23 @@ public class Main : MonoBehaviour
                     StopCoroutine(co_HideCursor);
                     co_HideCursor = null;
                     Cursor.visible = true;
-
-                    if (ScreenRecorder.finishedRecording)
-                        controlsGO.SetActive(true);
                 }
             }
+
+            controlsGO.SetActive(false);
         }
-        else
+        else // Pause/Stop
         {
             if (!Cursor.visible)
                 Cursor.visible = true;
 
-            if (ScreenRecorder.finishedRecording)
-                if (!controlsGO.activeSelf)
-                    controlsGO.SetActive(true);
+            controlsGO.SetActive(true);
         }
     }
     private IEnumerator HideCursor()
     {
         yield return new WaitForSeconds(3);
         Cursor.visible = false;
-        controlsGO.SetActive(false);
     }
 
 

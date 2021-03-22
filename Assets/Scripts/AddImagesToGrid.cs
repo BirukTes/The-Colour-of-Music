@@ -13,9 +13,11 @@ public class AddImagesToGrid : MonoBehaviour
     // Bools
     private static bool finishedSettingPlaceholders = false;
     private static bool finishedSettingTextures = false;
-    private static bool calculated = false;
+    private static bool calculatedRows = false;
     private static bool finishedMainRoutine = false;
     private static bool replacedChildrenWithSingle = false;
+
+    public static bool isProcessing = false;
 
 
     private List<int> spiralPath;
@@ -40,6 +42,7 @@ public class AddImagesToGrid : MonoBehaviour
                 //Change the path to location where your images are stored.
                 if (ScreenRecorder.screenShotList != null)
                 {
+                    isProcessing = true;
                     screenShotsCount = ScreenRecorder.screenShotList.Count;
                     overallAmountToProcess = ((float)screenShotsCount) * 2; // For both placeholder and adding images process
                     StartCoroutine("addPlaceholders");
@@ -77,10 +80,6 @@ public class AddImagesToGrid : MonoBehaviour
 
                         StartCoroutine("replaceChildrenWithSingleImage");
                     }
-                    else
-                    {
-
-                    }
                 }
             }
         }
@@ -105,7 +104,7 @@ public class AddImagesToGrid : MonoBehaviour
 
     private IEnumerator addRawImages()
     {
-        if (!calculated)
+        if (!calculatedRows)
         {
             float squareRoot = Mathf.Sqrt(puzzleField.transform.childCount);
             int row = Mathf.CeilToInt(squareRoot);
@@ -140,7 +139,7 @@ public class AddImagesToGrid : MonoBehaviour
                 }
             }
             calculateNum(row, column, amountByToReduce);
-            calculated = true;
+            calculatedRows = true;
             Debug.Log("Done");
         }
 
@@ -191,7 +190,8 @@ public class AddImagesToGrid : MonoBehaviour
         // ScreenRecorder.screenShotList[i].Compress(false);
         currentRawImageComp.texture = screenShotTexture;
         replacedChildrenWithSingle = true;
-
+        isProcessing = false;
+        
         yield break;
     }
 
@@ -224,8 +224,9 @@ public class AddImagesToGrid : MonoBehaviour
     {
         finishedSettingPlaceholders = false;
         finishedSettingTextures = false;
-        calculated = false;
+        calculatedRows = false;
         finishedMainRoutine = false;
         replacedChildrenWithSingle = false;
+        isProcessing = false;
     }
 }

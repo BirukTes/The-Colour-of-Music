@@ -43,17 +43,18 @@ public class ButtonController : MonoBehaviour
         {
             var bp = new BrowserProperties();
             bp.title = "Select Audio File";
-            bp.filter = "Supported Audio Files (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3";
+            bp.filter = "Supported Audio Files (Avoid .MP3 if possible) (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3";
             bp.filterIndex = 2;
 
             new FileBrowser().OpenFileBrowser(bp, result =>
             {
+                ProgressBar.EnableProgressBarGO();
+                ProgressBar.IncrementProgressBar(0.1f);
                 // resultText.text = result;
                 Main.selectedAudioPath = result;
+                Main.audioPathInUseForProcessing = result;
                 Main.selectedAudioPathName = Path.GetFileName(result);
 
-                AudioProcessor.ResetValues();
-                AudioProcessor.SetAudioData(true);
                 Main.audioFileChanged = true;
 
                 Debug.Log(result);
@@ -69,9 +70,9 @@ public class ButtonController : MonoBehaviour
             if (Main.selectedAudioPath != Main.defaultAudioPath)
             {
                 Main.selectedAudioPath = Main.defaultAudioPath;
+                Main.audioPathInUseForProcessing = Main.defaultAudioPath;
                 Main.selectedAudioPathName = Main.defaultAudioPathName;
 
-                AudioProcessor.SetAudioData(true);
                 Main.audioFileChanged = true;
             }
         }

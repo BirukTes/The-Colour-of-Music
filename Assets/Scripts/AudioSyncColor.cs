@@ -5,7 +5,7 @@ using Light2DE = UnityEngine.Experimental.Rendering.Universal.Light2D;
 public class AudioSyncColor : MonoBehaviour
 {
     public Color[] emotionColours;
-    public Color restColor;
+    public Color restColour;
     public Light2DE pointLight2D;
 
     //The start and finish positions for the interpolation
@@ -44,8 +44,6 @@ public class AudioSyncColor : MonoBehaviour
             {
                 currentColour = emotionColours[1];
             }
-            // StopCoroutine("MoveToColor"); TODO: guard with prevColour, if not changed donot change
-
 
             if (pointLight2D.color != currentColour)
             {
@@ -54,63 +52,15 @@ public class AudioSyncColor : MonoBehaviour
 
                 StartLerping(currentColour);
             }
-            // // pointLight2D.color = Color.Lerp(pointLight2D.color, restColor, 0.5f * Time.deltaTime);
-            // MoveToColor(currentColour);
-
         }
         else
         {
-            if (pointLight2D.color != restColor)
+            if (pointLight2D.color != restColour)
             {
-                StartLerping(restColor);
+                StartLerping(restColour);
             }
         }
     }
-    // private IEnumerator MoveToColor(Color targetColour)
-    // {
-    //     Color currentColour = pointLight2D.color;
-    //     Color initialColour = currentColour;
-    //     float timer = 0.5f;
-
-    //     while (currentColour != targetColour)
-    //     {
-    //         currentColour = Color.Lerp(initialColour, targetColour, timer * Time.deltaTime);
-    //         // timer += Time.deltaTime;
-
-    //         pointLight2D.color = currentColour;
-
-    //         yield return null;
-    //     }
-    // }
-    private IEnumerator MoveToColor1(Color targetColour)
-    {
-        Color currentColour = pointLight2D.color;
-        Color initialColour = currentColour;
-        float timer = 0;
-        float totalTime = 2f;
-
-        while (timer < totalTime)
-        {
-            currentColour = Color.Lerp(initialColour, targetColour, timer / totalTime);
-            timer += Time.deltaTime;
-
-            pointLight2D.color = currentColour;
-
-            yield return new WaitForEndOfFrame();
-        }
-    }
-    private void MoveToColor(Color targetColour)
-    {
-        Color currentColour = pointLight2D.color;
-        Color initialColour = currentColour;
-        float timer = 1f;
-
-        currentColour = Color.Lerp(initialColour, targetColour, timer * Time.deltaTime);
-        // timer += Time.deltaTime;
-
-        pointLight2D.color = currentColour;
-    }
-
 
     //We do the actual interpolation in FixedUpdate(), since we're dealing with a rigidbody
     void FixedUpdate()

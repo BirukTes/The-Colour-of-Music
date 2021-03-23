@@ -28,7 +28,7 @@ public class SonicRunner
     {
         int exitCode = 0;
 
-        string sonicExecutablePath = Application.dataPath + "/Lib/sonic-annotator-1.6-win64/sonic-annotator.exe";
+        string sonicExecutablePath = Application.streamingAssetsPath + "/TCM/sonic-annotator-1.6-win64/sonic-annotator.exe";
 
         var outputStrBuilder = new StringBuilder();
         var errorStrBuilder = new StringBuilder();

@@ -36,6 +36,12 @@ public class ButtonController : MonoBehaviour
         }
         else
         {
+            if (Main.firstTimePlay)
+            {
+                GetComponent<DestoryIntroPanel>().enabled = true;
+                Main.firstTimePlay = false;
+            }
+
             Main.audioSource.Play();
         }
     }
@@ -76,7 +82,8 @@ public class ButtonController : MonoBehaviour
                 Main.audioPathInUseForProcessing = Main.defaultAudioPath;
                 Main.selectedAudioPathName = Main.defaultAudioPathName;
 
-                Main.audioFileChanged = true;
+                Main.audioFileChanged = true;                
+                Main.resetAudioToDefault = true;                
             }
         }
     }
@@ -95,11 +102,6 @@ public class ButtonController : MonoBehaviour
             GetComponent<AudioSyncColor>().enabled = false;
             GetComponent<AddImagesToGrid>().enabled = true;
         }
-    }
-
-    private void OnDialogResult(int index)
-    {
-        Debug.Log(index);
     }
 
     public void SaveVisualisation()
@@ -124,6 +126,7 @@ public class ButtonController : MonoBehaviour
                 dialogBoxContainer.SetActive(true);
 
                 var dialogBoxTrigger = GetComponent<DialogBoxTrigger>();
+                dialogBoxTrigger.enabled = true;
                 dialogBoxTrigger.ShowWithCallback(selectionResult =>
                 {
                     Debug.Log(selectionResult);
@@ -163,7 +166,7 @@ public class ButtonController : MonoBehaviour
                 new FileBrowser().SaveFileBrowser(bp, getSaveFilename(), "png", result =>
                 {
                     Texture2D currentPictureTex = (Texture2D)GameObject.Find("SpiralPuzzlePanel").GetComponentInChildren<RawImage>().texture; // pull in our file data bytes for the specified image format (has to be done from main thread)
-                    byte[] fileData = currentPictureTex.EncodeToPNG();    
+                    byte[] fileData = currentPictureTex.EncodeToPNG();
 
                     // create new thread to save the image to file (only operation that can be done in background)
                     new System.Threading.Thread(() =>

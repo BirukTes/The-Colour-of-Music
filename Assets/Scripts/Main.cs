@@ -19,9 +19,11 @@ public class Main : MonoBehaviour
     public static string defaultAudioPathName;
     public static bool audioFileChanged;
     public static bool audioClipChanged;
+    public static bool resetAudioToDefault;
     public static bool audioFinishedPlaying;
     public static bool addImagesToGridisProcessing;
-    public static int  shouldDisableBtns = -1; // -1 == not set, 0=false, 1=true
+    public static bool firstTimePlay = true;
+    public static int shouldDisableBtns = -1; // -1 == not set, 0=false, 1=true
 
 
     [Header("Sprites")]
@@ -47,17 +49,19 @@ public class Main : MonoBehaviour
     public GameObject controlsGO;
     public Button saveButton;
     public Toggle pictureToggle;
+    public Toggle videoToggle;
 
     private int width; // width of the object to capture
     private int height; // height of the object to capture
     private string clipLength;
     private bool windowMaximised;
     private bool disabledBtnsOn;
+    private bool waitVideoModeToBeOn;
     private Coroutine co_HideCursor;
 
     void Awake()
     {
-        defaultAudioPath = Application.dataPath + "/Audio/Lang Lang – Beethoven Für Elise Bagatelle No. 25 in A Minor, WoO 59.ogg";
+        defaultAudioPath = Application.streamingAssetsPath + "/TCM/Audio/Lang Lang – Beethoven Für Elise Bagatelle No. 25 in A Minor, WoO 59.ogg";
         defaultAudioPathName = Path.GetFileName(defaultAudioPath);
         selectedAudioPath = defaultAudioPath;
         selectedAudioPathName = defaultAudioPathName;
@@ -85,6 +89,12 @@ public class Main : MonoBehaviour
             }
             else
             {
+                if (firstTimePlay)
+                {
+                    GetComponent<DestoryIntroPanel>().enabled = true;
+                    firstTimePlay = false;
+                }
+
                 audioSource.Play();
             }
         }
@@ -103,10 +113,32 @@ public class Main : MonoBehaviour
             AddImagesToGrid.ResetValues();
 
             ProgressBar.IncrementProgressBar(1f);
-            audioSource.Play();
+            ProgressBar.DisableProgressBarGO();
             shouldDisableBtns = 1;
             audioClipChanged = false;
-            ProgressBar.DisableProgressBarGO();
+
+
+            // Change of file during picture mode
+            if (pictureToggle.isOn)
+            {
+                waitVideoModeToBeOn = true;
+                pictureToggle.isOn = false;
+            }
+            else
+            {
+                audioSource.Play();
+            }
+        }
+
+
+        if (waitVideoModeToBeOn)
+        {
+            if (videoToggle.isOn && !audioSource.isPlaying)
+            {
+                audioSource.Play();
+            }
+
+            waitVideoModeToBeOn = false;
         }
 
         if (audioSource.isPlaying && audioSource.time >= 30)
@@ -161,51 +193,66 @@ public class Main : MonoBehaviour
 
     private IEnumerator ChangeClip()
     {
-        AudioType audioType = AudioType.MPEG;
-        var extension = Path.GetExtension(selectedAudioPath);
-        if (extension == ".wav")
+        if (resetAudioToDefault)
         {
-            audioType = AudioType.WAV;
+            var nameWithoutExt = defaultAudioPathName.Replace(Path.GetExtension(defaultAudioPathName), "");
+            //Load the sound
+            changeToClip(Resources.Load<AudioClip>(nameWithoutExt));
+            resetAudioToDefault = false;
         }
-        else if (extension == ".ogg")
+        else
         {
-            audioType = AudioType.OGGVORBIS;
-        }
-
-        using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + selectedAudioPath, audioType))
-        {
-            yield return www.SendWebRequest();
-
-            if (www.result == UnityWebRequest.Result.ConnectionError)
+            AudioType audioType = AudioType.MPEG;
+            var extension = Path.GetExtension(selectedAudioPath);
+            if (extension == ".wav")
             {
-                Debug.Log(www.error);
+                audioType = AudioType.WAV;
             }
-            else
+            else if (extension == ".ogg")
             {
-                AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
-                ProgressBar.IncrementProgressBar(0.3f);
+                audioType = AudioType.OGGVORBIS;
+            }
 
-                if (myClip == null)
+            using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip("file://" + selectedAudioPath, audioType))
+            {
+                yield return www.SendWebRequest();
+
+                if (www.result == UnityWebRequest.Result.ConnectionError)
                 {
-                    Debug.Log("Clip null");
+                    Debug.Log(www.error);
                 }
                 else
                 {
-                    audioSource.Stop();
-                    audioSource.clip = myClip;
-                    ProgressBar.IncrementProgressBar(0.5f);
+                    AudioClip myClip = DownloadHandlerAudioClip.GetContent(www);
+                    ProgressBar.IncrementProgressBar(0.3f);
 
-                    audioFileChanged = false;
-                    audioClipChanged = true;
-
-                    if (audioType == AudioType.MPEG)
+                    if (myClip == null)
                     {
-                        audioPathInUseForProcessing = StringUtil.Replace(selectedAudioPath, ".mp3", ".wav", StringComparison.OrdinalIgnoreCase);
-                        SavWav.Save(audioPathInUseForProcessing, myClip, false);
+                        Debug.Log("Clip null");
                     }
-                    ProgressBar.IncrementProgressBar(0.7f);
+                    else
+                    {
+                        changeToClip(myClip);
+
+                        if (audioType == AudioType.MPEG)
+                        {
+                            audioPathInUseForProcessing = StringUtil.Replace(selectedAudioPath, ".mp3", ".wav", StringComparison.OrdinalIgnoreCase);
+                            SavWav.Save(audioPathInUseForProcessing, myClip, false);
+                        }
+                        ProgressBar.IncrementProgressBar(0.7f);
+                    }
                 }
             }
+        }
+
+        void changeToClip(AudioClip changeToClip)
+        {
+            audioSource.Stop();
+            audioSource.clip = changeToClip;
+            ProgressBar.IncrementProgressBar(0.5f);
+
+            audioFileChanged = false;
+            audioClipChanged = true;
         }
 
         yield break;
@@ -298,13 +345,14 @@ public class Main : MonoBehaviour
 
             controlsGO.SetActive(true);
         }
-    }
-    private IEnumerator HideCursor()
-    {
-        yield return new WaitForSeconds(3);
-        Cursor.visible = false;
-    }
 
+
+        IEnumerator HideCursor()
+        {
+            yield return new WaitForSeconds(3);
+            Cursor.visible = false;
+        }
+    }
 
     private void UpdateDisableBtns()
     {
@@ -330,5 +378,5 @@ public class Main : MonoBehaviour
         }
     }
 
-    #endregion 
+    #endregion
 }

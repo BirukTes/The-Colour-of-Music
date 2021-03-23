@@ -4,11 +4,14 @@ using AnotherFileBrowser.Windows;
 using System.IO;
 using TMPro;
 using System.Collections;
+using System;
+using RockVR.Video;
 
 public class ButtonController : MonoBehaviour
 {
-    public Toggle ToggleVideo;
-    public Toggle TogglePicture;
+    public Toggle toggleVideo;
+    public Toggle togglePicture;
+
 
     [Space]
     public TMP_Dropdown fileDropDown;
@@ -80,13 +83,13 @@ public class ButtonController : MonoBehaviour
 
     public void ToggleMovieOrPicture()
     {
-        if (ToggleVideo.isOn)
+        if (toggleVideo.isOn)
         {
             GetComponent<AudioProcessor>().enabled = true;
             GetComponent<AudioSyncColor>().enabled = true;
             GetComponent<AddImagesToGrid>().enabled = false;
         }
-        else if (TogglePicture.isOn)
+        else if (togglePicture.isOn)
         {
             GetComponent<AudioProcessor>().enabled = false;
             GetComponent<AudioSyncColor>().enabled = false;
@@ -94,37 +97,91 @@ public class ButtonController : MonoBehaviour
         }
     }
 
+    private void OnDialogResult(int index)
+    {
+        Debug.Log(index);
+    }
 
     public void SaveVisualisation()
     {
-        if (ToggleVideo.isOn)
+        if (toggleVideo.isOn)
         {
-            // TODO
-        }
-        else if (TogglePicture.isOn)
-        {
-
-            var bp = new BrowserProperties();
-            bp.title = "Select Audio File";
-            bp.filter = "Supported Image File (*.png)|*.png";
-            bp.filterIndex = 2;
-
-            new FileBrowser().SaveFileBrowser(bp, "The Colour of Music", "png", result =>
+            if (ScreenRecorder.finishedVideoCapture)
             {
-                Texture2D currentPictureTex = (Texture2D)GameObject.Find("SpiralPuzzlePanel").GetComponentInChildren<RawImage>().texture; // pull in our file data bytes for the specified image format (has to be done from main thread)
-                byte[] fileData = currentPictureTex.EncodeToPNG();    // create file and write optional header with image bytes
-                // create new thread to save the image to file (only operation that can be done in background)
-                new System.Threading.Thread(() =>
+                if (PathConfig.lastVideoFile != "")
                 {
-                    var f = System.IO.File.Create(result);
+                    System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo()
+                    {
+                        FileName = PathConfig.lastVideoFile,
+                        UseShellExecute = true,
+                        Verb = "open"
+                    });
+                }
+            }
+            else if (!ScreenRecorder.isVideoCaptureInProcess) // Should not be
+            {
+                var dialogBoxContainer = GameObject.Find("MainCanvas").transform.Find("DialogBoxContainer").gameObject;
+                dialogBoxContainer.SetActive(true);
 
-                    f.Write(fileData, 0, fileData.Length);
-                    f.Close();
-                    Debug.Log(string.Format("Wrote screenshot {0} of size {1}", result, fileData.Length));
-                }).Start();
+                var dialogBoxTrigger = GetComponent<DialogBoxTrigger>();
+                dialogBoxTrigger.ShowWithCallback(selectionResult =>
+                {
+                    Debug.Log(selectionResult);
+                    dialogBoxContainer.SetActive(false);
+                    if (selectionResult == 0) // Element number == "OK"
+                    {
+                        var bp = new BrowserProperties();
+                        bp.title = "Select Save Location";
+                        bp.filter = "MPEG-4 Part 14 (*.mp4)|*.mp4";
+                        bp.filterIndex = 2;
 
-                Debug.Log(result);
-            });
+                        new FileBrowser().SaveFileBrowser(bp, getSaveFilename(), "mp4", pathResult =>
+                        {
+                            PathConfig.saveFolder = pathResult;
+                            ScreenRecorder.takeVideo = true;
+
+                            // Disable btns and restart music
+                            Main.shouldDisableBtns = 1;
+                            Main.audioSource.Stop();
+                            Main.audioSource.Play();
+
+                            Debug.Log(pathResult);
+                        });
+                    }
+                });
+            }
+        }
+        else if (togglePicture.isOn)
+        {
+            if (AddImagesToGrid.replacedChildrenWithSingle)
+            {
+                var bp = new BrowserProperties();
+                bp.title = "Select Save Location";
+                bp.filter = "Portable Network Graphics (*.png)|*.png";
+                bp.filterIndex = 2;
+
+                new FileBrowser().SaveFileBrowser(bp, getSaveFilename(), "png", result =>
+                {
+                    Texture2D currentPictureTex = (Texture2D)GameObject.Find("SpiralPuzzlePanel").GetComponentInChildren<RawImage>().texture; // pull in our file data bytes for the specified image format (has to be done from main thread)
+                    byte[] fileData = currentPictureTex.EncodeToPNG();    
+
+                    // create new thread to save the image to file (only operation that can be done in background)
+                    new System.Threading.Thread(() =>
+                        {
+                            var f = System.IO.File.Create(result);
+
+                            f.Write(fileData, 0, fileData.Length);
+                            f.Close();
+                            Debug.Log(string.Format("Wrote screenshot {0} of size {1}", result, fileData.Length));
+                        }).Start();
+
+                    Debug.Log(result);
+                });
+            }
+            else
+            {
+
+            }
         }
     }
 
@@ -137,5 +194,13 @@ public class ButtonController : MonoBehaviour
         fileDropDown.RefreshShownValue();
 
         yield break;
+    }
+
+    private string getSaveFilename()
+    {
+        string currentAudioFilename = Main.selectedAudioPathName.Replace(Path.GetExtension(Main.selectedAudioPathName), "");
+        return String.Format("The Colour of Music - {0} - {1}",
+        currentAudioFilename,
+        DateTime.Now.ToString("dd-MM-yyyy HH.mm.ss"));
     }
 }

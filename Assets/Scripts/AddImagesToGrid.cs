@@ -15,9 +15,7 @@ public class AddImagesToGrid : MonoBehaviour
     private static bool finishedSettingTextures = false;
     private static bool calculatedRows = false;
     private static bool finishedMainRoutine = false;
-    private static bool replacedChildrenWithSingle = false;
-
-    public static bool isProcessing = false;
+    public static bool replacedChildrenWithSingle = false;
 
 
     private List<int> spiralPath;
@@ -30,6 +28,7 @@ public class AddImagesToGrid : MonoBehaviour
     void OnEnable()
     {
         puzzleField.SetActive(true);
+
         if (!replacedChildrenWithSingle)
         {
             ProgressBar.EnableProgressBarGO();
@@ -37,12 +36,15 @@ public class AddImagesToGrid : MonoBehaviour
             {
                 Destroy(child.gameObject);
             }
+
+
             if (!finishedSettingPlaceholders)
             {
                 //Change the path to location where your images are stored.
                 if (ScreenRecorder.screenShotList != null)
                 {
-                    isProcessing = true;
+                    Main.addImagesToGridisProcessing = true;
+
                     screenShotsCount = ScreenRecorder.screenShotList.Count;
                     overallAmountToProcess = ((float)screenShotsCount) * 2; // For both placeholder and adding images process
                     StartCoroutine("addPlaceholders");
@@ -190,8 +192,8 @@ public class AddImagesToGrid : MonoBehaviour
         // ScreenRecorder.screenShotList[i].Compress(false);
         currentRawImageComp.texture = screenShotTexture;
         replacedChildrenWithSingle = true;
-        isProcessing = false;
-        
+        Main.addImagesToGridisProcessing = true;
+
         yield break;
     }
 
@@ -227,6 +229,5 @@ public class AddImagesToGrid : MonoBehaviour
         calculatedRows = false;
         finishedMainRoutine = false;
         replacedChildrenWithSingle = false;
-        isProcessing = false;
     }
 }

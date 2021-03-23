@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.Collections.Generic;
 using RockVR.Video;
@@ -11,23 +12,25 @@ public class ScreenRecorder : MonoBehaviour
     public static List<Texture2D> screenShotList = new List<Texture2D>();
 
     // commands
-    private static bool finishedScreenshot = false;
-    private static bool finishedVideoCapture = false;
+    public static bool finishedScreenshot = false;
+    public static bool finishedVideoCapture = false;
     public static bool finishedRecording = false;
-    public static bool isVideoCapturing = false;
+    public static bool takeVideo = false;
     public static bool isVideoCaptureInProcess = false;
 
     void Update()
     {
-        if (finishedScreenshot) // && finishedVideoCapture
+        if (finishedScreenshot)
         {
             finishedRecording = true;
         }
         else
         {
-            // TakeScreenShot();
-            TakeVideo();
+            TakeScreenShot();
         }
+
+        if (takeVideo) // According to the user's needs
+            TakeVideo();
     }
 
     public void TakeScreenShot()
@@ -67,8 +70,7 @@ public class ScreenRecorder : MonoBehaviour
         }
         else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STARTED && Main.audioFinishedPlaying) // "Stop Capture"
         {
-            Debug.Log("Stop");
-            VideoCaptureCtrl.instance.StopCapture();
+            VideoCaptureCtrl.instance.StopCapture(); // Will process the video
         }
         else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.STOPPED && !isVideoCaptureInProcess)
         {
@@ -77,8 +79,9 @@ public class ScreenRecorder : MonoBehaviour
         }
         else if (VideoCaptureCtrl.instance.status == VideoCaptureCtrl.StatusType.FINISH && !finishedVideoCapture)
         {
-            // if ("Finished")
+            // "Finished"
             finishedVideoCapture = true;
+            takeVideo = false;
             isVideoCaptureInProcess = false;
         }
     }
@@ -99,6 +102,9 @@ public class ScreenRecorder : MonoBehaviour
         finishedScreenshot = false;
         finishedVideoCapture = false;
         finishedRecording = false;
+        takeVideo = false;
+        isVideoCaptureInProcess = false;
+
         screenShotList = new List<Texture2D>(); // Reset values
     }
 }

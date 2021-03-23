@@ -39,6 +39,10 @@ public class SimpleTooltip : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
             simpleTooltipStyle = Resources.Load<SimpleTooltipStyle>("STDefault");
     }
 
+    void OnDisable()
+    {
+HideTooltip();
+    }
     private void Update()
     {
         if (!cursorInside)

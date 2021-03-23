@@ -17,9 +17,11 @@ public class Main : MonoBehaviour
     public static string defaultAudioPath;
     public static string selectedAudioPathName;
     public static string defaultAudioPathName;
-    public static bool audioFileChanged = false;
-    public static bool audioClipChanged = false;
-    public static bool audioFinishedPlaying = false;
+    public static bool audioFileChanged;
+    public static bool audioClipChanged;
+    public static bool audioFinishedPlaying;
+    public static bool addImagesToGridisProcessing;
+    public static int  shouldDisableBtns = -1; // -1 == not set, 0=false, 1=true
 
 
     [Header("Sprites")]
@@ -49,8 +51,8 @@ public class Main : MonoBehaviour
     private int width; // width of the object to capture
     private int height; // height of the object to capture
     private string clipLength;
-    private bool windowMaximised = false;
-    private bool disabledBtnsOn = false;
+    private bool windowMaximised;
+    private bool disabledBtnsOn;
     private Coroutine co_HideCursor;
 
     void Awake()
@@ -75,7 +77,7 @@ public class Main : MonoBehaviour
     void Update()
     {
         //When the user hits the spacebar, pause/play, but not while adding images and only works while playing
-        if (Input.GetKeyDown(KeyCode.Space) && !AddImagesToGrid.isProcessing)
+        if (Input.GetKeyDown(KeyCode.Space) && !addImagesToGridisProcessing)
         {
             if (audioSource.isPlaying)
             {
@@ -102,6 +104,7 @@ public class Main : MonoBehaviour
 
             ProgressBar.IncrementProgressBar(1f);
             audioSource.Play();
+            shouldDisableBtns = 1;
             audioClipChanged = false;
             ProgressBar.DisableProgressBarGO();
         }
@@ -110,6 +113,7 @@ public class Main : MonoBehaviour
         {
             audioSource.Stop();
             audioFinishedPlaying = true;
+            shouldDisableBtns = 0;
         }
         else
         {
@@ -121,7 +125,7 @@ public class Main : MonoBehaviour
         UpdateRunningTime();
         HideWhilePlaying();
 
-        UpdateScreenRecordFinish();
+        UpdateDisableBtns();
     }
 
     ////////////////////////  PUBLIC ///////////////////
@@ -142,7 +146,6 @@ public class Main : MonoBehaviour
 
                 windowMaximised = true;
             }
-
         }
     }
 
@@ -303,20 +306,9 @@ public class Main : MonoBehaviour
     }
 
 
-    private void UpdateScreenRecordFinish()
+    private void UpdateDisableBtns()
     {
-        if (ScreenRecorder.finishedRecording)
-        {
-            if (!disabledBtnsOn)
-            {
-                // TODO: neends to be off while processing...
-                saveButton.interactable = true;
-                pictureToggle.interactable = true;
-
-                disabledBtnsOn = true;
-            }
-        }
-        else
+        if (shouldDisableBtns == 1)
         {
             if (disabledBtnsOn)
             {
@@ -324,6 +316,16 @@ public class Main : MonoBehaviour
                 pictureToggle.interactable = false;
 
                 disabledBtnsOn = false;
+            }
+        }
+        else if (shouldDisableBtns == 0)
+        {
+            if (!disabledBtnsOn)
+            {
+                saveButton.interactable = true;
+                pictureToggle.interactable = true;
+
+                disabledBtnsOn = true;
             }
         }
     }

@@ -192,7 +192,7 @@ public class AddImagesToGrid : MonoBehaviour
         // ScreenRecorder.screenShotList[i].Compress(false);
         currentRawImageComp.texture = screenShotTexture;
         replacedChildrenWithSingle = true;
-        Main.addImagesToGridisProcessing = true;
+        Main.addImagesToGridisProcessing = false;
 
         yield break;
     }

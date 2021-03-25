@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -81,7 +80,7 @@ public class Main : MonoBehaviour
     void Update()
     {
         //When the user hits the spacebar, pause/play, but not while adding images and only works while playing
-        if (Input.GetKeyDown(KeyCode.Space) && !addImagesToGridisProcessing)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             if (audioSource.isPlaying)
             {
@@ -92,10 +91,10 @@ public class Main : MonoBehaviour
                 if (firstTimePlay)
                 {
                     GetComponent<DestoryIntroPanel>().enabled = true;
-                    firstTimePlay = false;
+                    firstTimePlay = false;                    
                 }
 
-                audioSource.Play();
+                StartCoroutine(playAudio());        
             }
         }
 
@@ -126,7 +125,7 @@ public class Main : MonoBehaviour
             }
             else
             {
-                audioSource.Play();
+                StartCoroutine(playAudio());        
             }
         }
 
@@ -135,7 +134,7 @@ public class Main : MonoBehaviour
         {
             if (videoToggle.isOn && !audioSource.isPlaying)
             {
-                audioSource.Play();
+                StartCoroutine(playAudio());        
             }
 
             waitVideoModeToBeOn = false;
@@ -158,6 +157,14 @@ public class Main : MonoBehaviour
         HideWhilePlaying();
 
         UpdateDisableBtns();
+
+        IEnumerator playAudio() {
+            // Wait to allow anything else finish e.g. introPanel, black rest colour, intensity
+            yield return new WaitForSeconds(0.5f);
+            audioSource.Play();
+
+            yield break;
+        }
     }
 
     ////////////////////////  PUBLIC ///////////////////

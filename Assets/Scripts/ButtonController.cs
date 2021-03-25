@@ -42,8 +42,16 @@ public class ButtonController : MonoBehaviour
                 Main.firstTimePlay = false;
             }
 
-            Main.audioSource.Play();
+            StartCoroutine(playAudio());
         }
+    }
+
+    private IEnumerator playAudio()
+    {
+        yield return new WaitForSeconds(0.5f);
+        Main.audioSource.Play();
+
+        yield break;
     }
 
     public void SelectAudioFile()
@@ -82,8 +90,8 @@ public class ButtonController : MonoBehaviour
                 Main.audioPathInUseForProcessing = Main.defaultAudioPath;
                 Main.selectedAudioPathName = Main.defaultAudioPathName;
 
-                Main.audioFileChanged = true;                
-                Main.resetAudioToDefault = true;                
+                Main.audioFileChanged = true;
+                Main.resetAudioToDefault = true;
             }
         }
     }
@@ -93,13 +101,15 @@ public class ButtonController : MonoBehaviour
         if (toggleVideo.isOn)
         {
             GetComponent<AudioProcessor>().enabled = true;
-            GetComponent<AudioSyncColor>().enabled = true;
+            GetComponent<AudioSyncColour>().enabled = true;
+            GetComponent<AudioSyncIntensity>().enabled = true;
             GetComponent<AddImagesToGrid>().enabled = false;
         }
         else if (togglePicture.isOn)
         {
             GetComponent<AudioProcessor>().enabled = false;
-            GetComponent<AudioSyncColor>().enabled = false;
+            GetComponent<AudioSyncColour>().enabled = false;
+            GetComponent<AudioSyncIntensity>().enabled = false;
             GetComponent<AddImagesToGrid>().enabled = true;
         }
     }
@@ -146,7 +156,7 @@ public class ButtonController : MonoBehaviour
                             // Disable btns and restart music
                             Main.shouldDisableBtns = 1;
                             Main.audioSource.Stop();
-                            Main.audioSource.Play();
+                            StartCoroutine(playAudio());
 
                             Debug.Log(pathResult);
                         });

@@ -9,7 +9,7 @@ public class AudioSyncIntensity : MonoBehaviour
     //The start and finish positions for the interpolation
     private float startIntensity;
     private float endIntensity;
-    public float timeTakenDuringLerp = 1f;
+    public float timeTakenDuringLerp = 0.5f;
     //Whether we are currently interpolating or not
     private bool isLerping;
     //The Time.time value when we started the interpolation
@@ -64,7 +64,7 @@ public class AudioSyncIntensity : MonoBehaviour
             pointLight2D.intensity = Mathf.Lerp(startIntensity, endIntensity, percentageComplete);
 
             //When we've completed the lerp, we set isLerping to false
-            if (percentageComplete >= 1.0f)
+            if (percentageComplete >= 0.999f)
             {
                 isLerping = false;
             }

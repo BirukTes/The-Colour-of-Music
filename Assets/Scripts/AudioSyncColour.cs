@@ -2,7 +2,7 @@
 using UnityEngine;
 using Light2DE = UnityEngine.Experimental.Rendering.Universal.Light2D;
 
-public class AudioSyncColor : MonoBehaviour
+public class AudioSyncColour : MonoBehaviour
 {
     public Color[] emotionColours;
     public Color restColour;
@@ -15,7 +15,7 @@ public class AudioSyncColor : MonoBehaviour
     /// <summary>
     /// The time taken to move from the start to finish positions
     /// </summary>
-    public float timeTakenDuringLerp = 1f;
+    public float timeTakenDuringLerp = 0.5f;
     //Whether we are currently interpolating or not
     private bool isLerping;
     //The Time.time value when we started the interpolation
@@ -67,18 +67,18 @@ public class AudioSyncColor : MonoBehaviour
     {
         if (isLerping)
         {
-            //We want percentage = 0.0 when Time.time = _timeStartedLerping
-            //and percentage = 1.0 when Time.time = _timeStartedLerping + timeTakenDuringLerp
+            //We want percentage = 0.0 when Time.time = timeStartedLerping
+            //and percentage = 1.0 when Time.time = timeStartedLerping + timeTakenDuringLerp
             //In other words, we want to know what percentage of "timeTakenDuringLerp" the value
-            //"Time.time - _timeStartedLerping" is.
+            //"Time.time - timeStartedLerping" is.
             float timeSinceStarted = Time.time - timeStartedLerping;
             float percentageComplete = (timeSinceStarted * tempoMultiplier) / timeTakenDuringLerp;
 
             //to start another lerp)
             pointLight2D.color = Color.Lerp(startColour, endColour, percentageComplete);
 
-            //When we've completed the lerp, we set _isLerping to false
-            if (percentageComplete >= 1.0f)
+            //When we've completed the lerp, we set isLerping to false
+            if (percentageComplete >= 0.999f)
             {
                 isLerping = false;
             }

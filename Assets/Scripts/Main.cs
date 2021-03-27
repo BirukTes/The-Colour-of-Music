@@ -10,6 +10,7 @@ public class Main : MonoBehaviour
 {
     //Static
     public static AudioSource audioSource;
+    public float audioRunningTime = 30f;
 
     public static string selectedAudioPath;
     public static string audioPathInUseForProcessing;
@@ -91,10 +92,10 @@ public class Main : MonoBehaviour
                 if (firstTimePlay)
                 {
                     GetComponent<DestoryIntroPanel>().enabled = true;
-                    firstTimePlay = false;                    
+                    firstTimePlay = false;
                 }
 
-                StartCoroutine(playAudio());        
+                StartCoroutine(playAudio());
             }
         }
 
@@ -107,7 +108,7 @@ public class Main : MonoBehaviour
             UpdateMediaInfo();
 
             AudioProcessor.ResetValues();
-            AudioProcessor.SetAudioData(false);
+            StartCoroutine(AudioProcessor.SetAudioData(false));
             ScreenRecorder.ResetValues();
             AddImagesToGrid.ResetValues();
 
@@ -125,7 +126,7 @@ public class Main : MonoBehaviour
             }
             else
             {
-                StartCoroutine(playAudio());        
+                StartCoroutine(playAudio());
             }
         }
 
@@ -134,13 +135,13 @@ public class Main : MonoBehaviour
         {
             if (videoToggle.isOn && !audioSource.isPlaying)
             {
-                StartCoroutine(playAudio());        
+                StartCoroutine(playAudio());
             }
 
             waitVideoModeToBeOn = false;
         }
 
-        if (audioSource.isPlaying && audioSource.time >= 30)
+        if (audioSource.isPlaying && audioSource.time >= audioRunningTime)
         {
             audioSource.Stop();
             audioFinishedPlaying = true;
@@ -158,7 +159,8 @@ public class Main : MonoBehaviour
 
         UpdateDisableBtns();
 
-        IEnumerator playAudio() {
+        IEnumerator playAudio()
+        {
             // Wait to allow anything else finish e.g. introPanel, black rest colour, intensity
             yield return new WaitForSeconds(0.5f);
             audioSource.Play();
@@ -267,7 +269,7 @@ public class Main : MonoBehaviour
 
     private void UpdateMediaInfo()
     {
-        TimeSpan clipLengthTimeSpan = TimeSpan.FromSeconds(30);
+        TimeSpan clipLengthTimeSpan = TimeSpan.FromSeconds(audioRunningTime);
         clipLength = string.Format("{0:D2}:{1:D2}", clipLengthTimeSpan.Minutes, clipLengthTimeSpan.Seconds);
 
         // Set fileName    

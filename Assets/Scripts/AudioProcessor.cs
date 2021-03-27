@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,12 +16,8 @@ public class AudioProcessor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetAudioData(false);
+       StartCoroutine(SetAudioData(true));
     }
-    // void OnEnable()
-    // {
-    //     SetAudioData(false);
-    // }
 
     // Update is called once per frame
     void Update()
@@ -34,7 +31,7 @@ public class AudioProcessor : MonoBehaviour
 
     }
 
-    public static void SetAudioData(bool usePbar)
+    public static IEnumerator SetAudioData(bool usePbar)
     {
         if (!finishedSettingDatasets)
         {
@@ -51,6 +48,7 @@ public class AudioProcessor : MonoBehaviour
             {
                 // Call the deserializer  
                 tempoDataResults = JsonHelper.DeserializeToList<TransformerDataResult>(jsonStrTempiOutput);
+                yield return null;
             }
 
             if (usePbar)
@@ -63,6 +61,7 @@ public class AudioProcessor : MonoBehaviour
             if (exitCode1 == 0)
             {
                 modeDataResults = JsonHelper.DeserializeToList<TransformerDataResult>(jsonStrModeOutput);
+                yield return null;
             }
 
             if (usePbar)
@@ -73,6 +72,7 @@ public class AudioProcessor : MonoBehaviour
 
             finishedSettingDatasets = true;
         }
+        yield break;
     }
 
     private void GetEmotion(float currentTimePosition)
@@ -100,7 +100,7 @@ public class AudioProcessor : MonoBehaviour
         int count = transformerDataResults.Count;
         for (int i = 0; i < count; i++)
         {
-            if (((i + 1) > count) || (count == 1)) 
+            if (((i + 1) > count) || (count == 1))
             {
                 // This is the end of the music/timeline, either there is one count or i + 1 will be out of range.
                 return transformerDataResults[i].Value;

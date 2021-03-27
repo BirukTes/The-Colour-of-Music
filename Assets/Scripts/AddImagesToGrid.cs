@@ -149,7 +149,6 @@ public class AddImagesToGrid : MonoBehaviour
         {
             // path begins from 1, but children from 0
             RawImage currentRawImageComp = puzzleField.transform.GetChild(spiralPath[i] - 1).GetComponent<RawImage>();
-            ScreenRecorder.screenShotList[i].Compress(false);
             currentRawImageComp.texture = ScreenRecorder.screenShotList[i];
 
             ProgressBar.IncrementProgressBar((overallProcessedAmount + (float)i) / overallAmountToProcess);
@@ -180,16 +179,20 @@ public class AddImagesToGrid : MonoBehaviour
     }
     private IEnumerator replaceChildrenWithSingleImage()
     {
-        for (int i = 0; i < puzzleField.transform.childCount - 1; i++)
+        foreach (Transform child in puzzleField.transform)
         {
-            Destroy(puzzleField.transform.GetChild(i).gameObject);
+            Destroy(child.gameObject);
         }
+
+        ScreenRecorder.screenShotList.ForEach(texture => { 
+            Destroy(texture);
+        }); // Reset the list, it should not be necessary now
 
         yield return new WaitForEndOfFrame();
 
-        // path begins from 1, but children from 0
-        RawImage currentRawImageComp = puzzleField.transform.GetChild(0).GetComponent<RawImage>();
-        // ScreenRecorder.screenShotList[i].Compress(false);
+        RawImage currentRawImageComp = Instantiate(rawImage);
+        currentRawImageComp.transform.SetParent(puzzleField.transform, false);
+
         currentRawImageComp.texture = screenShotTexture;
         replacedChildrenWithSingle = true;
         Main.addImagesToGridisProcessing = false;

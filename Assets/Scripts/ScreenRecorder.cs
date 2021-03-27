@@ -12,17 +12,17 @@ public class ScreenRecorder : MonoBehaviour
     public static List<Texture2D> screenShotList = new List<Texture2D>();
 
     // commands
-    public static bool finishedScreenshot = false;
-    public static bool finishedVideoCapture = false;
-    public static bool finishedRecording = false;
-    public static bool takeVideo = false;
-    public static bool isVideoCaptureInProcess = false;
+    public static bool finishedScreenshot;
+    public static bool finishedVideoCapture;
+    public static bool takeVideo;
+    public static bool isVideoCaptureInProcess;
+    public static bool doneCompressingShots;
 
     void Update()
     {
-        if (finishedScreenshot)
+        if (finishedScreenshot && !doneCompressingShots)
         {
-            finishedRecording = true;
+            StartCoroutine(CompressScreenShots());
         }
         else
         {
@@ -45,6 +45,7 @@ public class ScreenRecorder : MonoBehaviour
             {
                 StopCoroutine("TakeScreenShotInCoroutine");
                 finishedScreenshot = true;
+
                 Debug.Log("list : " + screenShotList.Count);
             }
         }
@@ -95,16 +96,34 @@ public class ScreenRecorder : MonoBehaviour
         yield break;
     }
 
+    private IEnumerator CompressScreenShots()
+    {
+        for (int i = 0; i < screenShotList.Count; i++)
+        {
+            screenShotList[i].Compress(false);
+            yield return null;
+        }
+        Debug.Log("done compress");
+        doneCompressingShots = true;
+        yield break;
+    }
+
 
     //// RESET VALUES    
     public static void ResetValues()
     {
         finishedScreenshot = false;
-        finishedVideoCapture = false;
-        finishedRecording = false;
+        finishedVideoCapture = false;  
         takeVideo = false;
         isVideoCaptureInProcess = false;
+        doneCompressingShots = false;
 
-        screenShotList = new List<Texture2D>(); // Reset values
+        if (screenShotList.Count > 0)
+        {
+            screenShotList.ForEach(texture =>
+            {
+                Destroy(texture);
+            }); // Reset the list
+        }
     }
 }

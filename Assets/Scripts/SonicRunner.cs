@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
 using System.Text;
-
+using System;
 
 public class SonicRunner
 {
@@ -27,6 +27,12 @@ public class SonicRunner
     private (int, string) runSonic(string argsToSonic)
     {
         int exitCode = 0;
+
+        // Set vamp plugins path
+        if (Environment.GetEnvironmentVariable("VAMP_PATH") == null)
+        {
+            Environment.SetEnvironmentVariable("VAMP_PATH", Application.streamingAssetsPath + "/TCM/Vamp Plugins/");
+        }
 
         string sonicExecutablePath = Application.streamingAssetsPath + "/TCM/sonic-annotator-1.6-win64/sonic-annotator.exe";
 

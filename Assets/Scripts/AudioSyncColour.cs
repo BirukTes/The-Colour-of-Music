@@ -21,6 +21,8 @@ public class AudioSyncColour : MonoBehaviour
     //The Time.time value when we started the interpolation
     private float timeStartedLerping;
     private float tempoMultiplier;
+    private Color currentColour;
+    
     /// <summary>
     /// Called to begin the linear interpolation
     /// </summary>
@@ -38,11 +40,15 @@ public class AudioSyncColour : MonoBehaviour
     {
         if (Main.audioSource.isPlaying)
         {
-            Color currentColour = emotionColours[0];
+            currentColour = emotionColours[0];
 
             if (AudioProcessor.currentEmotionValue == "sad")
             {
                 currentColour = emotionColours[1];
+            }
+            else if (AudioProcessor.currentEmotionValue == "None")
+            {
+                currentColour = restColour;
             }
 
             if (pointLight2D.color != currentColour)

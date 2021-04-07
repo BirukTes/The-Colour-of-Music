@@ -67,7 +67,7 @@ public class ButtonController : MonoBehaviour
             {
                 ProgressBar.EnableProgressBarGO();
                 ProgressBar.IncrementProgressBar(0.1f);
-                // resultText.text = result;
+                
                 Main.selectedAudioPath = result;
                 Main.audioPathInUseForProcessing = result;
                 Main.selectedAudioPathName = Path.GetFileName(result);

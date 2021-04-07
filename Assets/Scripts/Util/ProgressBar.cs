@@ -16,6 +16,8 @@ public class ProgressBar : MonoBehaviour
             progressBarBackgroundGO.SetActive(true);
 
             sliderBar = progressBarBackgroundGO.transform.Find("ProgressBar").GetComponent<Slider>();
+        } else {
+            progressBarBackgroundGO.SetActive(true);
         }
     }
 

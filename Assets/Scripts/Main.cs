@@ -123,6 +123,7 @@ public class Main : MonoBehaviour
             {
                 waitVideoModeToBeOn = true;
                 pictureToggle.isOn = false;
+                videoToggle.isOn = true;
             }
             else
             {
@@ -208,6 +209,7 @@ public class Main : MonoBehaviour
             //Load the sound
             changeToClip(Resources.Load<AudioClip>(nameWithoutExt));
             resetAudioToDefault = false;
+            ProgressBar.IncrementProgressBar(0.7f);
         }
         else
         {

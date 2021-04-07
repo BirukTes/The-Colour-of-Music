@@ -16,13 +16,13 @@ public class ScreenRecorder : MonoBehaviour
     public static bool finishedVideoCapture;
     public static bool takeVideo;
     public static bool isVideoCaptureInProcess;
-    public static bool doneCompressingShots;
+    public static bool doneCompressingShots = true;
 
     void Update()
     {
         if (finishedScreenshot && !doneCompressingShots)
         {
-            StartCoroutine(CompressScreenShots());
+            // StartCoroutine(CompressScreenShots());
         }
         else
         {
@@ -92,6 +92,7 @@ public class ScreenRecorder : MonoBehaviour
         yield return new WaitForEndOfFrame();
 
         screenShotList.Add(ScreenCapture.CaptureScreenshotAsTexture());
+        screenShotList[screenShotList.Count - 1].Compress(false); // Reduce memory footprint 
 
         yield break;
     }
@@ -113,7 +114,7 @@ public class ScreenRecorder : MonoBehaviour
     public static void ResetValues()
     {
         finishedScreenshot = false;
-        finishedVideoCapture = false;  
+        finishedVideoCapture = false;
         takeVideo = false;
         isVideoCaptureInProcess = false;
         doneCompressingShots = false;

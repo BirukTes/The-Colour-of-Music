@@ -162,7 +162,7 @@ public class Main : MonoBehaviour
         IEnumerator playAudio()
         {
             // Wait to allow anything else finish e.g. introPanel, black rest colour, intensity
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             audioSource.Play();
 
             yield break;

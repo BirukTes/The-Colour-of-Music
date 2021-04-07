@@ -77,25 +77,25 @@ public class AudioProcessor : MonoBehaviour
 
     private void GetEmotion(float currentTimePosition)
     {
-        // currentEmotionValue = "None";
-        float tempo = 0f;
+        currentEmotionValue = "None";
+        currentTempoValue = 0f;
         int mode = 0; // 0: minor, 1:major        
 
         currentTempoValue = getValueFor(tempoDataResults, currentTimePosition);
         mode = (int)getValueFor(modeDataResults, currentTimePosition);
 
 
-        if ((tempo > 108) && (mode == 1))
+        if ((currentTempoValue > 108) && (mode == 1))
         {
             currentEmotionValue = "happy";
         }
-        else if ((tempo < 108) && (mode == 0))
+        else if ((currentTempoValue < 108) && (mode == 0))
         {
             currentEmotionValue = "sad";
         }
     }
 
-    private static float getValueFor(IList<TransformerDataResult> transformerDataResults, float currentTimePosition)
+    private float getValueFor(IList<TransformerDataResult> transformerDataResults, float currentTimePosition)
     {
         int count = transformerDataResults.Count;
         for (int i = 0; i < count; i++)
@@ -121,6 +121,7 @@ public class AudioProcessor : MonoBehaviour
     public static void ResetValues()
     {
         finishedSettingDatasets = false;
+        currentTempoValue = 0f;
         tempoDataResults = new List<TransformerDataResult>();
         modeDataResults = new List<TransformerDataResult>();
     }

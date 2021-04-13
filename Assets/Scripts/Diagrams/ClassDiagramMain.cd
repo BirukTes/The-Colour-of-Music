@@ -1,0 +1,184 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Main">
+    <Position X="14.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AIQGIACAgCBAAMwFyGABLgAgFAAKEAgAAAAYgMDBQME=</HashCode>
+      <FileName>Assets\Scripts\Main.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AddImagesToGrid">
+    <Position X="9.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwAAACBAQEQAAAAQAAIACAAAIABASEIAAgBBAAAKAA=</HashCode>
+      <FileName>Assets\Scripts\AddImagesToGrid.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AudioProcessor">
+    <Position X="11.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAYAAABAACAAAAAIEBAMAAQAAAAAAAABAIAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\AudioProcessor.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AudioSyncColour">
+    <Position X="9.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAQEAAAAAgAoAAAAAAAAAAAAAIoAAAAAZAAACAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\AudioSyncColour.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="AudioSyncIntensity">
+    <Position X="16.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CASEAAAAAgAoAAAAAAAAAAAAAAAABAAAAAAACAEAAAA=</HashCode>
+      <FileName>Assets\Scripts\AudioSyncIntensity.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ProgressBar">
+    <Position X="16" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAAAAAAAAhAAAAQACAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Util\ProgressBar.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ScreenRecorder">
+    <Position X="12" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAAAAABAEAAgAACIAAAAEQQAAAEgQAAAIAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ScreenRecorder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ButtonController">
+    <Position X="17.75" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ACAAAhAAAABAAAAAAAAAAAQABAgwAAAAAAAiAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ButtonController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityEngine.MonoBehaviour" Collapsed="true">
+    <Position X="14.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="UnityEngine.Behaviour" Collapsed="true">
+    <Position X="16.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="UnityEngine.Component" Collapsed="true">
+    <Position X="18.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="UnityEngine.Object" Collapsed="true">
+    <Position X="20.25" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="System.Object" Collapsed="true">
+    <Position X="23.75" Y="0.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SpiralMatrix">
+    <Position X="24.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAgAAAAAAAgAAQAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Util\SpiralMatrix.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SonicRunner">
+    <Position X="22.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAQAAAAAAAAAIgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\SonicRunner.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="JsonHelper" Collapsed="true">
+    <Position X="24.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Util\JsonHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SavWav" Collapsed="true">
+    <Position X="22.5" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QAQAAoAAAAAAAAAIAgAAAAAAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Util\SavWav.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StringUtil" Collapsed="true">
+    <Position X="22.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA=</HashCode>
+      <FileName>Assets\Scripts\Util\StringUtil.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TransformerDataResult">
+    <Position X="24.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAACAAAAAAAAAAAAAIAAAAAAAAAgAAAAAQA=</HashCode>
+      <FileName>Assets\Scripts\Models\TransformerDataResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MaximizeStandaloneWindow" Collapsed="true">
+    <Position X="22.5" Y="9.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AABAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Util\MaximizeStandaloneWindow.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FlexibleGridLayout" Collapsed="true">
+    <Position X="20" Y="10.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAIAAAAAAACBAQAAAAAAAAAAACAAAAAgAwEQ=</HashCode>
+      <FileName>Assets\Scripts\Util\FlexibleGridLayout.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityEngine.UI.LayoutGroup" Collapsed="true">
+    <Position X="20" Y="9.25" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="AnotherFileBrowser.Windows.FileBrowser" Collapsed="true">
+    <Position X="22.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAEAAAACAAAAAAAAAAAAAAAAAAAAAAkAAAAAIAA=</HashCode>
+      <FileName>Assets\Scripts\Util\AnotherFileBrowser\Plugins\FileBrowser.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RockVR.Video.AudioCapture" Collapsed="true">
+    <Position X="18.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>QCQAAAAIACAAAAAAICAAAAACAAACAFAAAAEAAEgAAEI=</HashCode>
+      <FileName>Assets\RockVR\Video\Scripts\AudioCapture.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RockVR.Video.VideoCapture" Collapsed="true">
+    <Position X="18.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>MCQBhBAAAENAgAEADKgMKAAEAQAQADEQIAAAAEAAYEA=</HashCode>
+      <FileName>Assets\RockVR\Video\Scripts\VideoCapture.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UnityEngine.EventSystems.UIBehaviour" Collapsed="true">
+    <Position X="20" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="SimpleTooltip" Collapsed="true">
+    <Position X="20.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>EBQAABQAAAABBAAAgAAAAACAMAAkAAAIAAAAAQAQAEY=</HashCode>
+      <FileName>Assets\Simple Tooltip\Assets\Scripts\SimpleTooltip.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RockVR.Video.VideoCaptureBase" Collapsed="true">
+    <Position X="18.25" Y="3.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>YSIAQAAUBkACEACAIGhajAAAAgA1QEQhAAACAAkACEA=</HashCode>
+      <FileName>Assets\RockVR\Video\Scripts\Base\VideoCaptureBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

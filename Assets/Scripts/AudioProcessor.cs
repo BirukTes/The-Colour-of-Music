@@ -14,7 +14,7 @@ public class AudioProcessor : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-       StartCoroutine(SetAudioData(true));
+        StartCoroutine(SetAudioData(true));
     }
 
     // Update is called once per frame
@@ -65,8 +65,8 @@ public class AudioProcessor : MonoBehaviour
             if (usePbar)
             {
                 ProgressBar.IncrementProgressBar(1f);
-                ProgressBar.DisableProgressBarGO();
             }
+            ProgressBar.DisableProgressBarGO();
 
             finishedSettingDatasets = true;
         }
@@ -86,6 +86,14 @@ public class AudioProcessor : MonoBehaviour
         if ((currentTempoValue > 108) && (mode == 1))
         {
             currentEmotionValue = "happy";
+        }
+        else if ((currentTempoValue < 108) && (mode == 1))
+        {
+            currentEmotionValue = "Serenity";
+        }
+        else if ((currentTempoValue > 184) && (mode == 0))
+        {
+            currentEmotionValue = "Fear/Anger";
         }
         else if ((currentTempoValue < 108) && (mode == 0))
         {

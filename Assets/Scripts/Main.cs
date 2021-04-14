@@ -112,8 +112,6 @@ public class Main : MonoBehaviour
             ScreenRecorder.ResetValues();
             AddImagesToGrid.ResetValues();
 
-            ProgressBar.IncrementProgressBar(1f);
-            ProgressBar.DisableProgressBarGO();
             shouldDisableBtns = 1;
             audioClipChanged = false;
 

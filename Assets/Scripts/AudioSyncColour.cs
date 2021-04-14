@@ -22,7 +22,7 @@ public class AudioSyncColour : MonoBehaviour
     private float timeStartedLerping;
     private float tempoMultiplier;
     private Color currentColour;
-    
+
     /// <summary>
     /// Called to begin the linear interpolation
     /// </summary>
@@ -45,6 +45,14 @@ public class AudioSyncColour : MonoBehaviour
             if (AudioProcessor.currentEmotionValue == "sad")
             {
                 currentColour = emotionColours[1];
+            }
+            else if (AudioProcessor.currentEmotionValue == "serenity")
+            {
+                currentColour = emotionColours[2];
+            }
+            else if (AudioProcessor.currentEmotionValue == "fear/anger")
+            {
+                currentColour = emotionColours[3];
             }
             else if (AudioProcessor.currentEmotionValue == "None")
             {

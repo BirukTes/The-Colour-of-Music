@@ -40,9 +40,13 @@ public class AudioSyncColour : MonoBehaviour
     {
         if (Main.audioSource.isPlaying)
         {
-            currentColour = emotionColours[0];
+            currentColour = restColour; // could be "None"
 
-            if (AudioProcessor.currentEmotionValue == "sad")
+            if (AudioProcessor.currentEmotionValue == "happy")
+            {
+                currentColour = emotionColours[0];
+            }
+            else if (AudioProcessor.currentEmotionValue == "sad")
             {
                 currentColour = emotionColours[1];
             }
@@ -53,10 +57,6 @@ public class AudioSyncColour : MonoBehaviour
             else if (AudioProcessor.currentEmotionValue == "fear/anger")
             {
                 currentColour = emotionColours[3];
-            }
-            else if (AudioProcessor.currentEmotionValue == "None")
-            {
-                currentColour = restColour;
             }
 
             if (pointLight2D.color != currentColour)

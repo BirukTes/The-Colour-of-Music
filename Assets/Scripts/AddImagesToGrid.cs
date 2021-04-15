@@ -184,9 +184,11 @@ public class AddImagesToGrid : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        ScreenRecorder.screenShotList.ForEach(texture => { 
+        ScreenRecorder.screenShotList.ForEach(texture =>
+        {
             Destroy(texture);
         }); // Reset the list, it should not be necessary now
+        ScreenRecorder.screenShotList = new List<Texture2D>();
 
         yield return new WaitForEndOfFrame();
 

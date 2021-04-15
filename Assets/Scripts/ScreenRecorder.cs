@@ -16,18 +16,10 @@ public class ScreenRecorder : MonoBehaviour
     public static bool finishedVideoCapture;
     public static bool takeVideo;
     public static bool isVideoCaptureInProcess;
-    public static bool doneCompressingShots = true;
 
     void Update()
     {
-        if (finishedScreenshot && !doneCompressingShots)
-        {
-            // StartCoroutine(CompressScreenShots());
-        }
-        else
-        {
-            TakeScreenShot();
-        }
+        TakeScreenShot();
 
         if (takeVideo) // According to the user's needs
             TakeVideo();
@@ -97,18 +89,6 @@ public class ScreenRecorder : MonoBehaviour
         yield break;
     }
 
-    private IEnumerator CompressScreenShots()
-    {
-        for (int i = 0; i < screenShotList.Count; i++)
-        {
-            screenShotList[i].Compress(false);
-            yield return null;
-        }
-        Debug.Log("done compress");
-        doneCompressingShots = true;
-        yield break;
-    }
-
 
     //// RESET VALUES    
     public static void ResetValues()
@@ -117,7 +97,6 @@ public class ScreenRecorder : MonoBehaviour
         finishedVideoCapture = false;
         takeVideo = false;
         isVideoCaptureInProcess = false;
-        doneCompressingShots = false;
 
         if (screenShotList.Count > 0)
         {
@@ -125,6 +104,7 @@ public class ScreenRecorder : MonoBehaviour
             {
                 Destroy(texture);
             }); // Reset the list
+            screenShotList = new List<Texture2D>();
         }
     }
 }

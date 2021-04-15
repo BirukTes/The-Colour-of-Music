@@ -61,7 +61,7 @@ public class Main : MonoBehaviour
 
     void Awake()
     {
-        defaultAudioPath = Application.streamingAssetsPath + "/TCM/Audio/Lang Lang – Beethoven Für Elise Bagatelle No. 25 in A Minor, WoO 59.ogg";
+        defaultAudioPath = Application.streamingAssetsPath + "/TCM/Audio/Ludwig van Beethoven - Für Elise Bagatelle No. 25 in A Minor, WoO 59 (Lang Lang).ogg";
         defaultAudioPathName = Path.GetFileName(defaultAudioPath);
         selectedAudioPath = defaultAudioPath;
         selectedAudioPathName = defaultAudioPathName;
@@ -80,6 +80,18 @@ public class Main : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (audioSource.isPlaying && audioSource.time >= (audioRunningTime - 0.5)) // minus 0.5 to 59.5, to prevent audio finishing before
+        {
+            audioSource.Stop();
+            audioFinishedPlaying = true;
+            shouldDisableBtns = 0;
+        }
+        else if (audioSource.isPlaying)
+        {
+            audioFinishedPlaying = false;
+        }
+
+
         //When the user hits the spacebar, pause/play, but not while adding images and only works while playing
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -89,12 +101,6 @@ public class Main : MonoBehaviour
             }
             else
             {
-                if (firstTimePlay)
-                {
-                    GetComponent<DestoryIntroPanel>().enabled = true;
-                    firstTimePlay = false;
-                }
-
                 StartCoroutine(playAudio());
             }
         }
@@ -108,11 +114,10 @@ public class Main : MonoBehaviour
             UpdateMediaInfo();
 
             AudioProcessor.ResetValues();
-            StartCoroutine(AudioProcessor.SetAudioData(false));
             ScreenRecorder.ResetValues();
             AddImagesToGrid.ResetValues();
+            StartCoroutine(AudioProcessor.SetAudioData(false));
 
-            shouldDisableBtns = 1;
             audioClipChanged = false;
 
 
@@ -140,16 +145,6 @@ public class Main : MonoBehaviour
             waitVideoModeToBeOn = false;
         }
 
-        if (audioSource.isPlaying && audioSource.time >= audioRunningTime)
-        {
-            audioSource.Stop();
-            audioFinishedPlaying = true;
-            shouldDisableBtns = 0;
-        }
-        else
-        {
-            audioFinishedPlaying = false;
-        }
 
         UpdateFullscreen();
         UpdateSprites();
@@ -162,6 +157,11 @@ public class Main : MonoBehaviour
         {
             // Wait to allow anything else finish e.g. introPanel, black rest colour, intensity
             yield return new WaitForSeconds(0.2f);
+            if (firstTimePlay)
+            {
+                GetComponent<DestoryIntroPanel>().enabled = true;
+                firstTimePlay = false;
+            }
             audioSource.Play();
 
             yield break;
@@ -201,6 +201,7 @@ public class Main : MonoBehaviour
 
     private IEnumerator ChangeClip()
     {
+        shouldDisableBtns = 1;
         if (resetAudioToDefault)
         {
             var nameWithoutExt = defaultAudioPathName.Replace(Path.GetExtension(defaultAudioPathName), "");

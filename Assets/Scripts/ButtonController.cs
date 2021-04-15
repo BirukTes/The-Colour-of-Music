@@ -60,6 +60,7 @@ public class ButtonController : MonoBehaviour
         {
             var bp = new BrowserProperties();
             bp.title = "Select Audio File";
+            bp.initialDir = Path.GetDirectoryName(Main.selectedAudioPath);
             bp.filter = "Supported Audio Files (Avoid .MP3 if possible) (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3";
             bp.filterIndex = 2;
 
@@ -81,9 +82,6 @@ public class ButtonController : MonoBehaviour
         }
         else if (fileDropDown.value == 2)
         {
-            StartCoroutine(ChangeFileDropDownValue(0));
-
-
             if (Main.selectedAudioPath != Main.defaultAudioPath)
             {
                 Main.selectedAudioPath = Main.defaultAudioPath;
@@ -93,6 +91,8 @@ public class ButtonController : MonoBehaviour
                 Main.audioFileChanged = true;
                 Main.resetAudioToDefault = true;
             }
+            
+            StartCoroutine(ChangeFileDropDownValue(0));
         }
     }
 
@@ -153,9 +153,6 @@ public class ButtonController : MonoBehaviour
                             PathConfig.saveFolder = pathResult;
                             ScreenRecorder.takeVideo = true;
 
-                            // Disable btns and restart music
-                            Main.shouldDisableBtns = 1;
-                            Main.audioSource.Stop();
                             StartCoroutine(playAudio());
 
                             Debug.Log(pathResult);
@@ -193,7 +190,7 @@ public class ButtonController : MonoBehaviour
             }
             else
             {
-
+                // may not be clickable
             }
         }
     }

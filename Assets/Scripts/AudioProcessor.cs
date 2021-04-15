@@ -77,25 +77,26 @@ public class AudioProcessor : MonoBehaviour
     {
         currentEmotionValue = "None";
         currentTempoValue = 0f;
-        int mode = 0; // 0: minor, 1:major        
+        int mode = 0; // 0:major, 1: minor  
+        // Ref:http://vamp-plugins.org/rdf/plugins/qm-vamp-plugins#qm-keydetector     
 
         currentTempoValue = getValueFor(tempoDataResults, currentTimePosition);
         mode = (int)getValueFor(modeDataResults, currentTimePosition);
 
 
-        if ((currentTempoValue > 108) && (mode == 1))
+        if ((currentTempoValue > 108) && (mode == 0))
         {
             currentEmotionValue = "happy";
         }
-        else if ((currentTempoValue < 108) && (mode == 1))
-        {
-            currentEmotionValue = "Serenity";
-        }
-        else if ((currentTempoValue > 184) && (mode == 0))
-        {
-            currentEmotionValue = "Fear/Anger";
-        }
         else if ((currentTempoValue < 108) && (mode == 0))
+        {
+            currentEmotionValue = "serenity";
+        }
+        else if ((currentTempoValue > 184) && (mode == 1))
+        {
+            currentEmotionValue = "fear/anger";
+        }
+        else if ((currentTempoValue < 108) && (mode == 1))
         {
             currentEmotionValue = "sad";
         }
@@ -103,10 +104,10 @@ public class AudioProcessor : MonoBehaviour
 
     private float getValueFor(IList<TransformerDataResult> transformerDataResults, float currentTimePosition)
     {
-        int count = transformerDataResults.Count;
-        for (int i = 0; i < count; i++)
+        int loopTo = transformerDataResults.Count;
+        for (int i = 0; i < loopTo; i++)
         {
-            if (((i + 1) > count) || (count == 1))
+            if (((loopTo == 1) || (i + 1) > (loopTo - 1)))
             {
                 // This is the end of the music/timeline, either there is one count or i + 1 will be out of range.
                 return transformerDataResults[i].Value;

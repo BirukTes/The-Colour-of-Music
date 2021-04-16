@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using TMPro;
 using UnityEngine;
@@ -87,14 +88,15 @@ public class Main : MonoBehaviour
             audioFinishedPlaying = true;
             shouldDisableBtns = 0;
 
-            if (pictureModeWasOnSoSwitchBack) {
+            if (pictureModeWasOnSoSwitchBack)
+            {
                 videoToggle.isOn = false;
                 pictureToggle.isOn = true;
 
                 pictureModeWasOnSoSwitchBack = false;
             }
         }
-        else if (audioSource.isPlaying)
+        else //if (audioSource.isPlaying)
         {
             audioFinishedPlaying = false;
         }

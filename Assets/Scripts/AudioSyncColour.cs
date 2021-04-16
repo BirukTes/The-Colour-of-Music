@@ -25,6 +25,7 @@ public class AudioSyncColour : MonoBehaviour
 
     /// <summary>
     /// Called to begin the linear interpolation
+    /// Ref: https://www.blueraja.com/blog/404/how-to-use-unity-3ds-linear-interpolation-vector3-lerp-correctly
     /// </summary>
     void StartLerping(Color targetColour)
     {

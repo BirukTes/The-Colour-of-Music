@@ -75,7 +75,7 @@ public class AudioProcessor : MonoBehaviour
 
     private void GetEmotion(float currentTimePosition)
     {
-        currentEmotionValue = "None";
+        currentEmotionValue = "none";
         currentTempoValue = 0f;
         int mode = 0; // 0:major, 1: minor  
         // Ref:http://vamp-plugins.org/rdf/plugins/qm-vamp-plugins#qm-keydetector     

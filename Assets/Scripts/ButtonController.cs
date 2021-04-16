@@ -59,7 +59,7 @@ public class ButtonController : MonoBehaviour
         if (fileDropDown.value == 1)
         {
             var bp = new BrowserProperties();
-            bp.title = "Select Audio File";
+            bp.title = "Select Audio File (Avoid .MP3 if possible and more than one minute and not too long)";
             bp.initialDir = Path.GetDirectoryName(Main.selectedAudioPath);
             bp.filter = "Supported Audio Files (Avoid .MP3 if possible) (*.wav;*.ogg;*.mp3)|*.wav;*.ogg;*.mp3";
             bp.filterIndex = 2;

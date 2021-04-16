@@ -57,6 +57,7 @@ public class Main : MonoBehaviour
     private bool windowMaximised;
     private bool disabledBtnsOn;
     private bool waitVideoModeToBeOn;
+    private bool pictureModeWasOnSoSwitchBack;
     private Coroutine co_HideCursor;
 
     void Awake()
@@ -85,6 +86,13 @@ public class Main : MonoBehaviour
             audioSource.Stop();
             audioFinishedPlaying = true;
             shouldDisableBtns = 0;
+
+            if (pictureModeWasOnSoSwitchBack) {
+                videoToggle.isOn = false;
+                pictureToggle.isOn = true;
+
+                pictureModeWasOnSoSwitchBack = false;
+            }
         }
         else if (audioSource.isPlaying)
         {
@@ -125,6 +133,7 @@ public class Main : MonoBehaviour
             if (pictureToggle.isOn)
             {
                 waitVideoModeToBeOn = true;
+                pictureModeWasOnSoSwitchBack = true;
                 pictureToggle.isOn = false;
                 videoToggle.isOn = true;
             }

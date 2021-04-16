@@ -45,7 +45,7 @@
   <Class Name="ScreenRecorder">
     <Position X="12" Y="2.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAQAAAAAAABAEAAgAACIAAAAEQQAAAEgQAAAIAAAAAA=</HashCode>
+      <HashCode>AAQAAAAAAABAEAAAAACIAAAAEAQAAAEgQAAAIAAAAAA=</HashCode>
       <FileName>Assets\Scripts\ScreenRecorder.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -87,7 +87,7 @@
     <Position X="22.5" Y="2.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAQAAAAAAAAAIgAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Assets\Scripts\SonicRunner.cs</FileName>
+      <FileName>Assets\Scripts\Util\SonicRunner.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="JsonHelper" Collapsed="true">

@@ -1,7 +1,7 @@
 # The-Colour-of-Music
 The Colour of Music - Unity 2D Visualisation demonstration application 
 
-### Application Features:
+### Application Features
 - [x] Detection the emotion of a piece of an audio 
 - [x] Display a corresponding colour for a given emotion
 - [x] Playing the current audio
@@ -25,7 +25,8 @@ The Colour of Music - Unity 2D Visualisation demonstration application
 ![Screenshot](https://user-images.githubusercontent.com/23151263/115565017-eb445580-a2b0-11eb-8f6d-9936757c6421.png "App Controls and Logo")
 
 #### Output of Picture Mode
-- Test audio files can be found in the releases folder `(\The Colour of Music_Data\StreamingAssets\TCM\Audio)`
+- Test audio files can be found in the releases folder `(\The Colour of Music_Data\StreamingAssets\TCM\Audio)`.
+- Each colour square is a screenshot from the 'video'/movie mode.
 ![The Colour of Music - Erik Satie - Gymnopédie No  1 (Rousseau) - 16-04-2021 14 24 48](https://user-images.githubusercontent.com/23151263/115564399-57728980-a2b0-11eb-9646-305ed4f34948.png "Erik Satie - Gymnopédie No  1 (Rousseau)")
 ![The Colour of Music - Franz Liszt - Hungarian Rhapsody No   2 (Rousseau) - 16-04-2021 14 28 01](https://user-images.githubusercontent.com/23151263/115564406-580b2000-a2b0-11eb-9241-1268ff2edf0e.png "Franz Liszt - Hungarian Rhapsody No   2 (Rousseau)")
 ![The Colour of Music - Frédéric François Chopin - Fantaisie-Impromptu (Op  66) (Rousseau) - 16-04-2021 14 31 37](https://user-images.githubusercontent.com/23151263/115564411-58a3b680-a2b0-11eb-8681-ccd06c18050a.png "Frédéric François Chopin - Fantaisie-Impromptu (Op  66) (Rousseau)")

@@ -12,6 +12,11 @@ The Colour of Music - Unity 2D Visualisation demonstration application
 - [x] A save button to save the selected video (recorder is buggy) or picture
 - [x] A switch to full screen or windowed mode
 
+###### Known Issues
+- [x] While switching to windowed mode from screen, a second window may appear in front which looks like not responsive:
+  - [ ] Change to the first window from the taskbar or alt+tab switcher and close the second window.
+  
+  
 ### System Requirements
 1. Windows 10 64bit
 2. 6 Gigabytes (GB) or more available RAM

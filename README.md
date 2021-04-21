@@ -9,7 +9,7 @@ The Colour of Music - Unity 2D Visualisation demonstration application
   - [x] Moving colour change or picture.
   - [x] A still picture, made up of all the screenshots taken during 'Video' mode.
 - [x] An option to change between selected audio file
-- [x] A save button to save the selected video (buggy) or picture
+- [x] A save button to save the selected video (recorder is buggy) or picture
 - [x] A switch to full screen or windowed mode
 
 ### System Requirements

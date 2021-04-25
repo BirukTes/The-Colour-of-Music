@@ -1,3 +1,5 @@
+![TCM-Icon (Custom)](https://user-images.githubusercontent.com/23151263/115999184-bbfc5400-a5e2-11eb-8dd2-029b38d0eba0.png)
+
 # The Colour of Music
 The Colour of Music - Unity 2D Visualisation demonstration application 
 

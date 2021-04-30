@@ -85,10 +85,10 @@ This project is about mapping or translating music into a visual experience such
 
 
 ## References
-- RAMOS, D., BUENO, J.L.O. & BIGAND, E., 2011. Manipulating Greek musical modes and tempo affects perceived musical emotion in musicians and nonmusicians. Brazilian Journal of Medical and Biological Research. 44(2), pp.165-172. Available from: 10.1590/S0100-879X2010007500148.
+- RAMOS, D., BUENO, J.L.O. & BIGAND, E., 2011. Manipulating Greek musical modes and tempo affects perceived musical emotion in musicians and nonmusicians. Brazilian Journal of Medical and Biological Research. 44(2), pp.165-172. Available from: https://doi.org/10.1590/S0100-879X2010007500148.
 - RAM, V., SCHAPOSNIK, L.P., KONSTANTINOU, N., VOLKAN, E., PAPADATOU-PASTOU, M., MANAV, B., JONAUSKAITE, D. & MOHR, C., 2020. Extrapolating continuous color emotions through deep learning. Physical Review Research. 2(3), pp.033350. Available from: https://doi.org/10.1103/PhysRevResearch.2.033350.
 - ART THERAPY. ,Color Psychology: The Psychological Effects of Colors, 2011.: Art Therapy. -02-28T06:49:08+00:00 [viewed Apr 4, 2021]. Available from: http://www.arttherapyblog.com/online/color-psychology-psychologica-effects-of-colors/.
 
-- YANG, Y. & CHEN, H.H., 2012. Machine Recognition of Music Emotion. ACM Transactions on Intelligent Systems and Technology (TIST). 3(3), pp.1-30. Available from: 10.1145/2168752.2168754.
-- PALMER, S.E., SCHLOSS, K.B., XU, Z. & PRADO-LEÓN, L.R., 2013. Music–color associations are mediated by emotion. Proceedings of the National Academy of Sciences of the United States of America. 110(22), pp.8836-8841. Available from: 10.1073/pnas.1212562110.
-- WHITEFORD, K.L., SCHLOSS, K.B., HELWIG, N.E. & PALMER, S.E., 2018. Color, Music, and Emotion: Bach to the Blues. I-Perception (London). 9(6), pp.204166951880853-2041669518808535. Available from: 10.1177/2041669518808535.
+- YANG, Y. & CHEN, H.H., 2012. Machine Recognition of Music Emotion. ACM Transactions on Intelligent Systems and Technology (TIST). 3(3), pp.1-30. Available from: https://doi.org/10.1145/2168752.2168754.
+- PALMER, S.E., SCHLOSS, K.B., XU, Z. & PRADO-LEÓN, L.R., 2013. Music–color associations are mediated by emotion. Proceedings of the National Academy of Sciences of the United States of America. 110(22), pp.8836-8841. Available from: https://doi.org/10.1073/pnas.1212562110.
+- WHITEFORD, K.L., SCHLOSS, K.B., HELWIG, N.E. & PALMER, S.E., 2018. Color, Music, and Emotion: Bach to the Blues. I-Perception (London). 9(6), pp.204166951880853-2041669518808535. Available from: https://doi.org/10.1177/2041669518808535.

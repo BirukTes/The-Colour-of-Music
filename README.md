@@ -78,7 +78,7 @@ This project is about mapping or translating music into a visual experience such
 ## Limitations and Future Work
 1. Emotion detection and use of colour palette were some of the limitations of this project and other previous projects due to ambiguities, subjectivities, and disagreements that exist (Yang & Chen, 2012).
 2. Emotion detection could possibly use newer methods of MER which are mostly based of Machine Learning technology.
-3. This would eliminate use of Sonic Annotator and conditionals and broaden the application of the system.
+    - This would eliminate use of Sonic Annotator and conditionals and broaden the application of the system.
 4. Colour changing could match the beat/tempo, currently it is not convincing that it does use the tempo multipler.
 5. The prototype application could use less system resources, therefore being able to run and adapt to the length of the audio music played.
 6. The video recording and saving feature could use the newer or another enhanced library.

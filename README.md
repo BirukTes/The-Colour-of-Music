@@ -10,11 +10,11 @@ This project is about mapping or translating music into a visual experience such
 - [x] Detection the emotion of a piece of an audio 
 - [x] Display a corresponding colour for a given emotion
 - [x] Playing the current audio
-- [x] An option to select between a “Video” and “Picture” mode
+- [x] An option to select between a 'Video' and 'Picture' mode
   - [x] Moving colour change or picture.
   - [x] A still picture, made up of all the screenshots taken during 'Video' mode.
 - [x] An option to change between selected audio file
-- [x] A save button to save the selected video (recorder is buggy, is unable to delete recorded video and audio after merging to the final output video) or picture
+- [x] A save button to save the selected video (recorder is buggy, is unable to delete recorded video and audio after merging into the final output video) or picture
 - [x] A switch to full screen or windowed mode
 
 ###### Known Issues
@@ -51,10 +51,10 @@ This project is about mapping or translating music into a visual experience such
 
 ## How it works?
 1. Music is processed using `Sonic Annotator` to extract the `Tempo` and `Mode`, provided as JSON format/type. 
-2. Then as the music plays, the time position is taken, using that the `Tempo` and `Mode` are looked-up and saved into current... variables.
+2. Then as the music plays, the time position is taken, using that, the `Tempo` and `Mode` are looked-up and saved into `currentTempo`, `currentMode`... variables.
 3. Using the current tempo and mode the emotion is determined.    
 4. Using the emotion the corresponding colour is shown using a LERP (Linear Interpolation) function to ease it.
-5. There is also intensity Synchronisation which corresponds the current tempo, modifies the intensity of the colour shown.
+5. There is also an intensity Synchronisation function which corresponds the current tempo, modifies the intensity of the colour shown.
 ![image](https://user-images.githubusercontent.com/23151263/116756435-fd866800-aa03-11eb-9204-233c3b17d2a8.png)
 
 ### Music and Emotion Mapping
